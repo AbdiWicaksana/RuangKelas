@@ -1,6 +1,8 @@
 package com.example.ruangkelas;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +26,7 @@ public class HomeActivity extends AppCompatActivity
     EditText clsName;
     EditText clsSubject;
     EditText clsAuthor;
+    public static final String my_shared_preferences = "my_shared_preferences";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +111,12 @@ public class HomeActivity extends AppCompatActivity
             startActivity(intentAbout);
 
         } else if (id == R.id.nav_logout) {
-            Intent intentLogout = new Intent(HomeActivity.this, LoginActivity.class);
+            SharedPreferences sharedPreferences = getSharedPreferences(my_shared_preferences,
+                    Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();
+            editor.commit();
+            Intent intentLogout = new Intent(HomeActivity.this, Login.class);
             startActivity(intentLogout);
         }
 

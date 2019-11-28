@@ -86,7 +86,7 @@ public class Login extends AppCompatActivity {
         username = sharedpreferences.getString(TAG_USERNAME, null);
 
         if (session) {
-            Intent intent = new Intent(Login.this, MainActivity.class);
+            Intent intent = new Intent(Login.this, HomeActivity.class);
             intent.putExtra(TAG_ID, id);
             intent.putExtra(TAG_USERNAME, username);
             finish();
@@ -165,7 +165,7 @@ public class Login extends AppCompatActivity {
                         editor.commit();
 
                         // Memanggil main activity
-                        Intent intent = new Intent(Login.this, MainActivity.class);
+                        Intent intent = new Intent(Login.this, HomeActivity.class);
                         intent.putExtra(TAG_ID, id);
                         intent.putExtra(TAG_USERNAME, username);
                         finish();
