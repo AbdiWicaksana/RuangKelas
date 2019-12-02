@@ -33,6 +33,7 @@
                 android:background="@drawable/edittext"
                 android:drawableLeft="@drawable/user"
                 android:drawablePadding="15dp"
+                android:inputType="text"
                 android:hint="Username"
                 android:padding="13dp"
                 android:textColor="@color/white"
@@ -54,6 +55,20 @@
                 android:padding="13dp"
                 android:textColor="@color/white"
                 android:textColorHint="@color/white" />
+
+            <Button
+                android:id="@+id/btnlogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginLeft="40dp"
+                android:textColor="@color/colorPrimary"
+                android:background="@drawable/button"
+                android:onClick="Login"
+                android:text="Login" />
+
             <TextView
                 android:id="@+id/daftar"
                 android:layout_width="wrap_content"
@@ -65,18 +80,6 @@
                 android:textColor="@color/white"
                 android:textStyle="italic" />
 
-            <Button
-                android:id="@+id/btnlogin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="40dp"
-                android:layout_marginLeft="40dp"
-                android:textColor="@color/colorPrimary"
-                android:background="@drawable/button"
-                android:onClick="Login"
-                android:text="Login" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
