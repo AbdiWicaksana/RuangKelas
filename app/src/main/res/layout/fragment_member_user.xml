@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:background="@color/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:id="@+id/linierbiru"
+                android:background="@drawable/gradient">
+
+                <TextView
+                    android:id="@+id/bckMember"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="20dp"
+                    android:background="@drawable/back" />
+                <TextView
+                    android:id="@+id/member"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Member"
+                    android:textAllCaps="true"
+                    android:layout_marginLeft="115dp"
+                    android:layout_gravity="center"
+                    android:textSize="20dp"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linierDosen"
+                android:weightSum="2"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/linierbiru"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/roboto_black"
+                    android:textAlignment="center"
+                    android:text="List Dosen"
+                    android:textStyle="bold"
+                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20dp"/>
+            </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rec_Dosen"
+                android:layout_below="@+id/linierDosen">
+            </android.support.v7.widget.RecyclerView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linierMahasiswa"
+                android:layout_below="@id/rec_Dosen"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/roboto_black"
+                    android:textAlignment="center"
+                    android:text="List Mahasiswa"
+                    android:textStyle="bold"
+                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20dp"/>
+
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/rec_Mahasiswa"
+                android:layout_below="@+id/linierMahasiswa">
+            </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+    </ScrollView>
+
+</RelativeLayout>
+
