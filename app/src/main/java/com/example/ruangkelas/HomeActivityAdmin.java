@@ -19,7 +19,7 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity
+public class HomeActivityAdmin extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     List<Classes> listClasses;
     public ClassesAdapter clsAdapter;
@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_home_admin);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -60,6 +60,23 @@ public class HomeActivity extends AppCompatActivity
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         clsAdapter = new ClassesAdapter(this, listClasses);
         recyclerView.setAdapter(clsAdapter);
+
+        clsName=(EditText) findViewById(R.id.classname);
+        clsSubject=(EditText) findViewById(R.id.classSubject);
+        clsAuthor=(EditText) findViewById(R.id.classAuthor);
+        Button buttonSave = findViewById(R.id.saveclass);
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newClsName=clsName.getText().toString();
+                String newClsSubject=clsSubject.getText().toString();
+                String newClsAuthor=clsAuthor.getText().toString();
+                // add new item to arraylist
+                listClasses.add(new Classes("" + newClsName, "" + newClsSubject, "" + newClsAuthor));
+                // notify listview of data changed
+                clsAdapter.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -79,18 +96,18 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_classes) {
-            Intent intentClasses = new Intent(HomeActivity.this, HomeActivity.class);
+            Intent intentClasses = new Intent(HomeActivityAdmin.this, HomeActivityAdmin.class);
             startActivity(intentClasses);
         } else if (id == R.id.nav_contact) {
-            Intent intentContact = new Intent(HomeActivity.this, ContactUs.class);
+            Intent intentContact = new Intent(HomeActivityAdmin.this, ContactUs.class);
             startActivity(intentContact);
 
         } else if (id == R.id.nav_report) {
-            Intent intentAbout = new Intent(HomeActivity.this, Report.class);
+            Intent intentAbout = new Intent(HomeActivityAdmin.this, Report.class);
             startActivity(intentAbout);
 
         } else if (id == R.id.nav_about) {
-            Intent intentAbout = new Intent(HomeActivity.this, About.class);
+            Intent intentAbout = new Intent(HomeActivityAdmin.this, About.class);
             startActivity(intentAbout);
 
         } else if (id == R.id.nav_logout) {
@@ -99,7 +116,7 @@ public class HomeActivity extends AppCompatActivity
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();
             editor.commit();
-            Intent intentLogout = new Intent(HomeActivity.this, Login.class);
+            Intent intentLogout = new Intent(HomeActivityAdmin.this, Login.class);
             startActivity(intentLogout);
         }
 

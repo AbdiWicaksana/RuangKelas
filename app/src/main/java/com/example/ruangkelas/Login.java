@@ -49,6 +49,7 @@ public class Login extends AppCompatActivity {
 
     public final static String TAG_USERNAME = "username";
     public final static String TAG_ID = "id";
+    public final static String TAG_ROLE = "role";
 
     String tag_json_obj = "json_obj_req";
 
@@ -152,6 +153,7 @@ public class Login extends AppCompatActivity {
                     if (success == 1) {
                         String username = jObj.getString(TAG_USERNAME);
                         String id = jObj.getString(TAG_ID);
+                        String role = jObj.getString(TAG_ROLE);
 
                         Log.e("Successfully Login!", jObj.toString());
 
@@ -162,12 +164,15 @@ public class Login extends AppCompatActivity {
                         editor.putBoolean(session_status, true);
                         editor.putString(TAG_ID, id);
                         editor.putString(TAG_USERNAME, username);
+                        editor.putString(TAG_ROLE,role);
                         editor.commit();
 
                         // Memanggil main activity
-                        Intent intent = new Intent(Login.this, HomeActivity.class);
+                        Intent intent = new Intent(Login.this,
+                                role.equals("Admin") ? HomeActivityAdmin.class : HomeActivity.class);
                         intent.putExtra(TAG_ID, id);
                         intent.putExtra(TAG_USERNAME, username);
+                        intent.putExtra(TAG_ROLE, role);
                         finish();
                         startActivity(intent);
                     } else {
