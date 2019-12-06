@@ -12,8 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import java.util.ArrayList;
@@ -86,7 +84,7 @@ public class HomeActivity extends AppCompatActivity
             startActivity(intentContact);
 
         } else if (id == R.id.nav_report) {
-            Intent intentAbout = new Intent(HomeActivity.this, Report.class);
+            Intent intentAbout = new Intent(HomeActivity.this, Profile.class);
             startActivity(intentAbout);
 
         } else if (id == R.id.nav_about) {

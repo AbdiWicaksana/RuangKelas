@@ -28,7 +28,7 @@ public class HomeUserActivity extends AppCompatActivity implements NavigationVie
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_home_user);
+            setContentView(R.layout.app_bar_home_user);
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             NavigationView navigationView = findViewById(R.id.nav_view);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -85,7 +85,7 @@ public class HomeUserActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intentContact);
 
             } else if (id == R.id.nav_report) {
-                Intent intentAbout = new Intent(HomeUserActivity.this, Report.class);
+                Intent intentAbout = new Intent(HomeUserActivity.this, Profile.class);
                 startActivity(intentAbout);
 
             } else if (id == R.id.nav_about) {
