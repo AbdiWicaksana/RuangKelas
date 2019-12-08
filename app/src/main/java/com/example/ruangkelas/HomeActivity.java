@@ -23,9 +23,6 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     List<Classes> listClasses;
     public ClassesAdapter clsAdapter;
-    EditText clsName;
-    EditText clsSubject;
-    EditText clsAuthor;
     public static final String my_shared_preferences = "my_shared_preferences";
 
     @Override
