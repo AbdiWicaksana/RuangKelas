@@ -103,7 +103,7 @@ public class HomeActivityAdmin extends AppCompatActivity
             startActivity(intentContact);
 
         } else if (id == R.id.nav_report) {
-            Intent intentAbout = new Intent(HomeActivityAdmin.this, Report.class);
+            Intent intentAbout = new Intent(HomeActivityAdmin.this, Profile.class);
             startActivity(intentAbout);
 
         } else if (id == R.id.nav_about) {
