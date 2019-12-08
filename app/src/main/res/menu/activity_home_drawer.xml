@@ -14,7 +14,7 @@
             android:title="@string/menu_contact" />
         <item
             android:id="@+id/nav_report"
-            android:icon="@drawable/report"
+            android:icon="@drawable/ic_account_circle_black_24dp"
             android:title="@string/menu_report" />
         <item
             android:id="@+id/nav_about"
