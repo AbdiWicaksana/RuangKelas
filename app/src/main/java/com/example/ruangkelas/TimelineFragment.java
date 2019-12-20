@@ -1,5 +1,6 @@
 package com.example.ruangkelas;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ public class TimelineFragment extends Fragment {
     View v3;
     RecyclerView recyclerView;
     List<Timeline> listTimeline;
+    TextView announce;
     private TimelineAdapter tlAdapter;
     EditText editTextNewSndr;
     EditText editTextNewTtlAnn;
@@ -38,6 +40,7 @@ public class TimelineFragment extends Fragment {
         tlAdapter = new TimelineAdapter(getContext(), listTimeline);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(tlAdapter);
+        announce = (TextView) v3.findViewById(R.id.announce);
 
         editTextNewSndr=(EditText) v3.findViewById(R.id.newPengirim);
         editTextNewTtlAnn=(EditText) v3.findViewById(R.id.newTitleAnnounce);
@@ -55,6 +58,14 @@ public class TimelineFragment extends Fragment {
                 tlAdapter.notifyDataSetChanged();
             }
 
+        });
+
+        announce.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CommentTimelineActivity.class);
+                startActivity(intent);
+            }
         });
 
         TextView buttonBckTimeline = v3.findViewById(R.id.bckTimeline);
