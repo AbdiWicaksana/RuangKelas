@@ -9,5 +9,6 @@
     <color name="colorButton">#001C54</color>
     <color name="black">#000000</color>
     <color name="background">#ECECEC</color>
+    <color name="bluePrimary">#203DD1</color>
 
 </resources>

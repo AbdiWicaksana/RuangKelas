@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -20,12 +21,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.factory.AppDatabase;
 import com.example.ruangkelas.model.kelas;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -38,10 +50,20 @@ public class HomeActivity extends AppCompatActivity
     ImageView photo_profile;
     SharedPreferences sharedpreferences;
     String id, nama, email;
+    int success;
+
+    private static final String TAG = HomeActivity.class.getSimpleName();
+
+    private String SELECT_URL = Server.URL + "select_photo.php";
 
     public static final String TAG_ID           = "id";
     public static final String TAG_NAMA         = "nama";
     public static final String TAG_EMAIL          = "email";
+    private static final String TAG_PHOTO = "photo";
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+
+    String tag_json_obj = "json_obj_req";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +80,6 @@ public class HomeActivity extends AppCompatActivity
         id = sharedpreferences.getString(TAG_ID, null);
         nama = sharedpreferences.getString(TAG_NAMA, null);
         email = sharedpreferences.getString(TAG_EMAIL, null);
-
-        Toast.makeText(HomeActivity.this, email, Toast.LENGTH_LONG).show();
 
         txt_nama_header.setText(nama);
         txt_email_header.setText(email);
@@ -78,6 +98,55 @@ public class HomeActivity extends AppCompatActivity
         listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
 
         showClasses();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST, SELECT_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "Response" + response.toString());
+
+                try {
+//                    Toast.makeText(getActivity(), user_id, Toast.LENGTH_LONG).show();
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
+
+                    if (success == 1) {
+                        Log.d("get photo profile", jObj.toString());
+                        String id = (jObj.getString(TAG_ID));
+                        String photo = (jObj.getString(TAG_PHOTO));
+
+                        if (!id.isEmpty()) {
+                            Picasso.with(HomeActivity.this).load(photo).centerCrop().fit().into(photo_profile);
+
+                        } else {
+                            Toast.makeText(HomeActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        }
+
+                    } else {
+                        Toast.makeText(HomeActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Error: " + error.getMessage());
+                Toast.makeText(HomeActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters ke post url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", id);
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
     }
 
     private void showClasses() {
