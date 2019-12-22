@@ -117,18 +117,6 @@
             android:text="Create"
             android:layout_marginBottom="20dp"
             android:textColor="@color/white" />
-        <Button
-            android:id="@+id/tes"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/classAuthor"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_home"
-            android:text="Tes"
-            android:layout_marginBottom="20dp"
-            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout

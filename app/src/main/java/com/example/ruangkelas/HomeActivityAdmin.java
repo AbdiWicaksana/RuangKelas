@@ -51,14 +51,6 @@ public class HomeActivityAdmin extends AppCompatActivity
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "id12007477_ruangkelas").build();
 
-        Button btnTes = findViewById(R.id.tes);
-        btnTes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showData();
-            }
-        });
-
         navigationView.setNavigationItemSelectedListener(this);
         listClasses = new ArrayList<>();
         listClasses.add(new Classes("Kelas Pemrograman Mobile","Kelas Paralel","Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT"));
@@ -141,11 +133,8 @@ public class HomeActivityAdmin extends AppCompatActivity
                 Toast.makeText(HomeActivityAdmin.this, test, Toast.LENGTH_SHORT).show();
             }
         }.execute();
-
-
-
-
     }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
