@@ -49,13 +49,15 @@ public class Login extends AppCompatActivity {
 
     public final static String TAG_USERNAME = "username";
     public final static String TAG_ID = "id";
+    public final static String TAG_NAMA = "nama";
+    public final static String TAG_NIM = "nim";
     public final static String TAG_ROLE = "role";
 
     String tag_json_obj = "json_obj_req";
 
     SharedPreferences sharedpreferences;
     Boolean session = false;
-    String id, username;
+    String id, username, nama, nim;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
 
@@ -84,12 +86,16 @@ public class Login extends AppCompatActivity {
         sharedpreferences = getSharedPreferences(my_shared_preferences, Context.MODE_PRIVATE);
         session = sharedpreferences.getBoolean(session_status, false);
         id = sharedpreferences.getString(TAG_ID, null);
+        nama = sharedpreferences.getString(TAG_NAMA, null);
+        nim = sharedpreferences.getString(TAG_NIM, null);
         username = sharedpreferences.getString(TAG_USERNAME, null);
 
         if (session) {
             Intent intent = new Intent(Login.this, HomeActivity.class);
             intent.putExtra(TAG_ID, id);
             intent.putExtra(TAG_USERNAME, username);
+            intent.putExtra(TAG_NAMA, nama);
+            intent.putExtra(TAG_NIM, nim);
             finish();
             startActivity(intent);
         }
@@ -153,6 +159,8 @@ public class Login extends AppCompatActivity {
                     if (success == 1) {
                         String username = jObj.getString(TAG_USERNAME);
                         String id = jObj.getString(TAG_ID);
+                        String nama = jObj.getString(TAG_NAMA);
+                        String nim = jObj.getString(TAG_NIM);
                         String role = jObj.getString(TAG_ROLE);
 
                         Log.e("Successfully Login!", jObj.toString());
@@ -163,6 +171,8 @@ public class Login extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedpreferences.edit();
                         editor.putBoolean(session_status, true);
                         editor.putString(TAG_ID, id);
+                        editor.putString(TAG_NAMA, nama);
+                        editor.putString(TAG_NIM, nim);
                         editor.putString(TAG_USERNAME, username);
                         editor.putString(TAG_ROLE,role);
                         editor.commit();
@@ -171,6 +181,8 @@ public class Login extends AppCompatActivity {
                         Intent intent = new Intent(Login.this,
                                 role.equals("Admin") ? HomeActivityAdmin.class : HomeActivity.class);
                         intent.putExtra(TAG_ID, id);
+                        intent.putExtra(TAG_NAMA, nama);
+                        intent.putExtra(TAG_NIM, nim);
                         intent.putExtra(TAG_USERNAME, username);
                         intent.putExtra(TAG_ROLE, role);
                         finish();

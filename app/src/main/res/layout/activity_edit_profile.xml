@@ -47,26 +47,13 @@
         app:layout_constraintTop_toBottomOf="@+id/linierbiru"
         tools:layout_editor_absoluteX="0dp">
 
-        <com.github.florent37.shapeofview.shapes.CircleView
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_gravity="center">
-
-            <ImageView
-                android:id="@+id/photo_edit_profile"
-                android:src="@drawable/icon_nopic"
-                android:layout_width="90dp"
-                android:layout_height="90dp"/>
-
-        </com.github.florent37.shapeofview.shapes.CircleView>
-
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColorHint="@color/colorAccent">
             <EditText
                 android:layout_width="match_parent"
-                android:id="@+id/classname"
+                android:id="@+id/txt_nama"
                 android:layout_height="wrap_content"
                 android:drawablePadding="20dp"
                 android:ems="10"
@@ -83,7 +70,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/classSubject"
+                android:id="@+id/txt_nim"
                 android:layout_below="@+id/classname"
                 android:textSize="13dp"
                 android:drawablePadding="20dp"
@@ -101,7 +88,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/classEmail"
+                android:id="@+id/txt_email"
                 android:layout_below="@+id/classSubject"
                 android:textSize="13dp"
                 android:ems="10"
@@ -117,7 +104,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/classUsername"
+                android:id="@+id/txt_username"
                 android:layout_below="@+id/classSubject"
                 android:textSize="13dp"
                 android:ems="10"
@@ -133,7 +120,8 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/classPassword"
+                android:id="@+id/txt_password"
+                android:inputType="textPassword"
                 android:layout_below="@+id/classSubject"
                 android:textSize="13dp"
                 android:ems="10"
@@ -143,7 +131,7 @@
         </android.support.design.widget.TextInputLayout>
 
         <Button
-            android:id="@+id/saveclass"
+            android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@id/classAuthor"
