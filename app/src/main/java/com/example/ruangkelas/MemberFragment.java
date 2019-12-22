@@ -62,19 +62,6 @@ public class MemberFragment extends Fragment {
         recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView2.setAdapter(dsnAdapter);
 
-        editTextNewDosen=(EditText) v.findViewById(R.id.newDosen);
-        Button btAddDosen=(Button) v.findViewById(R.id.saveDosen);
-        btAddDosen.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newDsn=editTextNewDosen.getText().toString();
-                // add new item to arraylist
-                listDosen.add(new Dosen("" + newDsn,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
-                // notify listview of data changed
-                dsnAdapter.notifyDataSetChanged();
-            }
-        });
-
         TextView buttonBckMember = v.findViewById(R.id.bckMember);
         buttonBckMember.setOnClickListener(new View.OnClickListener() {
             @Override

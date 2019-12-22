@@ -51,29 +51,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textColorHint="@color/black"
-                    android:id="@+id/edittextDosen">
-
-                    <EditText
-                        android:id="@+id/newDosen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="30dp"
-                        android:hint="Add Dosen"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="13sp" />
-                </android.support.design.widget.TextInputLayout>
-                <Button
-                    android:id="@+id/saveDosen"
+                    android:id="@+id/edittextDosen"/>
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/button_home"
-                    android:text="Add"
-                    android:layout_marginBottom="5dp"
-                    android:textColor="@color/white" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/roboto_black"
+                    android:textAlignment="center"
+                    android:text="List Dosen"
+                    android:textStyle="bold"
+                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20dp"/>
             </LinearLayout>
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
@@ -88,6 +79,19 @@
                 android:id="@+id/linierMahasiswa"
                 android:layout_below="@id/rec_Dosen"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/roboto_black"
+                    android:textAlignment="center"
+                    android:text="List Mahasiswa"
+                    android:textStyle="bold"
+                    android:textColorHint="@color/colorAccent"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="20dp"/>
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

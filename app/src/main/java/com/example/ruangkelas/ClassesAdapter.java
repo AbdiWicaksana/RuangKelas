@@ -1,7 +1,9 @@
 package com.example.ruangkelas;
 
+import android.app.AlertDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -61,7 +63,20 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
         holder.kelasRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onDeleteData(position);
+                new AlertDialog.Builder(view.getContext())
+                        .setTitle("Choose Action")
+                        .setMessage("Are you sute want to delete this data ?")
+
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                onDeleteData(position);
+                            }
+                        })
+
+                        .setNegativeButton("No",null)
+                        .show();
+
             }
         });
     }
