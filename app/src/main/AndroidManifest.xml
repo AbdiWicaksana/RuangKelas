@@ -24,7 +24,6 @@
             android:name=".HomeActivityAdmin"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".LoginActivity" />
         <activity android:name=".Login" />
         <activity android:name=".Register" />
         <activity android:name=".About" />
@@ -41,7 +40,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUpActivity" />
     </application>
 
 </manifest>
