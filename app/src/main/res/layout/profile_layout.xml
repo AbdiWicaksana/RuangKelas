@@ -53,6 +53,11 @@
             android:layout_height="90dp"
             android:src="@drawable/icon_nopic" />
 
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/icon_nopic" />
+
     </com.github.florent37.shapeofview.shapes.CircleView>
 
     <Button
