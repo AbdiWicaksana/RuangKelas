@@ -51,13 +51,14 @@ public class Login extends AppCompatActivity {
     public final static String TAG_ID = "id";
     public final static String TAG_NAMA = "nama";
     public final static String TAG_NIM = "nim";
+    public final static String TAG_EMAIL = "email";
     public final static String TAG_ROLE = "role";
 
     String tag_json_obj = "json_obj_req";
 
     SharedPreferences sharedpreferences;
     Boolean session = false;
-    String id, username, nama, nim;
+    String id, username, nama, nim, email;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
 
@@ -88,6 +89,7 @@ public class Login extends AppCompatActivity {
         id = sharedpreferences.getString(TAG_ID, null);
         nama = sharedpreferences.getString(TAG_NAMA, null);
         nim = sharedpreferences.getString(TAG_NIM, null);
+        email = sharedpreferences.getString(TAG_EMAIL, null);
         username = sharedpreferences.getString(TAG_USERNAME, null);
 
         if (session) {
@@ -96,6 +98,7 @@ public class Login extends AppCompatActivity {
             intent.putExtra(TAG_USERNAME, username);
             intent.putExtra(TAG_NAMA, nama);
             intent.putExtra(TAG_NIM, nim);
+            intent.putExtra(TAG_EMAIL, email);
             finish();
             startActivity(intent);
         }
@@ -161,6 +164,7 @@ public class Login extends AppCompatActivity {
                         String id = jObj.getString(TAG_ID);
                         String nama = jObj.getString(TAG_NAMA);
                         String nim = jObj.getString(TAG_NIM);
+                        String email = jObj.getString(TAG_EMAIL);
                         String role = jObj.getString(TAG_ROLE);
 
                         Log.e("Successfully Login!", jObj.toString());
@@ -173,6 +177,7 @@ public class Login extends AppCompatActivity {
                         editor.putString(TAG_ID, id);
                         editor.putString(TAG_NAMA, nama);
                         editor.putString(TAG_NIM, nim);
+                        editor.putString(TAG_EMAIL, email);
                         editor.putString(TAG_USERNAME, username);
                         editor.putString(TAG_ROLE,role);
                         editor.commit();
@@ -183,6 +188,7 @@ public class Login extends AppCompatActivity {
                         intent.putExtra(TAG_ID, id);
                         intent.putExtra(TAG_NAMA, nama);
                         intent.putExtra(TAG_NIM, nim);
+                        intent.putExtra(TAG_EMAIL, email);
                         intent.putExtra(TAG_USERNAME, username);
                         intent.putExtra(TAG_ROLE, role);
                         finish();

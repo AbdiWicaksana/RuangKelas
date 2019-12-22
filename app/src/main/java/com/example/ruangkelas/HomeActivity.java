@@ -14,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,14 @@ public class HomeActivity extends AppCompatActivity
     public static final String my_shared_preferences = "my_shared_preferences";
     private AppDatabase db;
 
+    TextView txt_nama_header, txt_email_header;
+    ImageView photo_profile;
+    SharedPreferences sharedpreferences;
+    String id, nama, email;
+
+    public static final String TAG_ID           = "id";
+    public static final String TAG_NAMA         = "nama";
+    public static final String TAG_EMAIL          = "email";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +49,21 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        txt_nama_header = headerView.findViewById(R.id.txt_nama_header);
+        txt_email_header = headerView.findViewById(R.id.txt_email_header);
+        photo_profile = headerView.findViewById(R.id.photo_profile);
+
+        sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
+        id = sharedpreferences.getString(TAG_ID, null);
+        nama = sharedpreferences.getString(TAG_NAMA, null);
+        email = sharedpreferences.getString(TAG_EMAIL, null);
+
+        Toast.makeText(HomeActivity.this, email, Toast.LENGTH_LONG).show();
+
+        txt_nama_header.setText(nama);
+        txt_email_header.setText(email);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
