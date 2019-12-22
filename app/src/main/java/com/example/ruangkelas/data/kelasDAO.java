@@ -9,8 +9,6 @@ import android.arch.persistence.room.Update;
 
 import com.example.ruangkelas.model.kelas;
 
-import java.util.List;
-
 @Dao
 public interface kelasDAO {
 
@@ -21,12 +19,9 @@ public interface kelasDAO {
     int updateKelas(kelas Kelas);
 
     @Delete
-    int deleteKelas(kelas Kelas);
+    void deleteKelas(kelas Kelas);
 
     @Query("SELECT * FROM tb_kelas")
-    public List<kelas> selectAllKelas();
-
-    @Query("SELECT * FROM tb_kelas WHERE kelasid = :id LIMIT 1")
-    kelas selectKelasDetail(int id);
+    kelas[] readDataKelas();
 
 }

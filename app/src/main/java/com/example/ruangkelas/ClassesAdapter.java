@@ -1,5 +1,6 @@
 package com.example.ruangkelas;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ruangkelas.model.kelas;
+import com.example.ruangkelas.data.factory.AppDatabase;
 
 import com.bumptech.glide.Glide;
 
@@ -20,11 +22,15 @@ import java.util.List;
 public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHolder> {
 
     Context context;
-    List<Classes> listClasses;
+    List<kelas> listKelas;
+    private AppDatabase appDatabase;
 
-    public ClassesAdapter(Context context, List<Classes> listClasses) {
+    public ClassesAdapter(Context context, List<kelas> listKelas) {
         this.context = context;
-        this.listClasses = listClasses;
+        this.listKelas = listKelas;
+        appDatabase = Room.databaseBuilder(
+                context.getApplicationContext(),
+                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
     }
 
     @Override
@@ -37,9 +43,13 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        holder.kelasNama.setText(listClasses.get(position).getNamaKelas());
-        holder.kelasSubjek.setText(listClasses.get(position).getSubjekKelas());
-        holder.kelasAuthor.setText(listClasses.get(position).getAuthorKelas());
+        String getKelasNama = listKelas.get(position).getNamaKelas();
+        String getKelasSubjek = listKelas.get(position).getSubjekKelas();
+        String getKelasAuthor = listKelas.get(position).getAuthorKelas();
+
+        holder.kelasNama.setText(getKelasNama);
+        holder.kelasSubjek.setText(getKelasSubjek);
+        holder.kelasAuthor.setText(getKelasAuthor);
         holder.kelasNama.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,16 +61,22 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
         holder.kelasRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listClasses.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position,listClasses.size());
+                onDeleteData(position);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return listClasses.size();
+        return listKelas.size();
+    }
+
+    private void onDeleteData(int position){
+        appDatabase.KelasDAO().deleteKelas(listKelas.get(position));
+        listKelas.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, listKelas.size());
+        Toast.makeText(context, "Data Berhasil Dihapus", Toast.LENGTH_SHORT).show();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

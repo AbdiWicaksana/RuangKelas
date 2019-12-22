@@ -22,13 +22,16 @@ import com.example.ruangkelas.data.factory.AppDatabase;
 import com.example.ruangkelas.model.kelas;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    List<Classes> listClasses;
+    List<kelas> listKelas;
     public ClassesAdapter clsAdapter;
     public static final String my_shared_preferences = "my_shared_preferences";
+    private AppDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,18 +44,13 @@ public class HomeActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
+
         navigationView.setNavigationItemSelectedListener(this);
-        listClasses = new ArrayList<>();
-        listClasses.add(new Classes("Kelas Pemrograman Mobile","Kelas Paralel","Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT"));
-        listClasses.add(new Classes("Kelas Pemrograman Internet","Kelas Paralel","I Putu Arya Dharmaadi, ST.,MT"));
-        listClasses.add(new Classes("Kelas Pemrograman","Kelas Paralel","I Made Sunia Raharja, S.Kom., M.Cs"));
-        listClasses.add(new Classes("Kelas Pemrograman Berorientasi Objek","Kelas Paralel","I Putu Arya Dharmaadi, ST.,MT"));
-        listClasses.add(new Classes("Kelas Internet of Things","Kelas Paralel","Kadek Suar Wibawa, ST, MT"));
-        listClasses.add(new Classes("Kelas Interpesonal Life Skill","Kelas Paralel","Prof. Dr. I Ketut Gede Darma Putra, S.Kom., M.T."));
-        listClasses.add(new Classes("Teknologi Basis Data","Kelas Paralel","Dwi Putra Githa, S.T., M.T."));
-        listClasses.add(new Classes("Pengolahan Citra Digital","Kelas Paralel","Ni Kadek Ayu Wirdiani, S.T., M.T."));
-        listClasses.add(new Classes("Rekayasa Perangkat Lunak","Kelas Paralel","Ni Kadek Dwi Rusjayanthi, S.T., M.T."));
-        listClasses.add(new Classes("Aplikasi Sosial Media","Kelas Paralel","I Putu Agus Eka Pratama, S.T., M.T."));
+        listKelas = new ArrayList<>();
+
+        listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
 
         showClasses();
     }
@@ -61,7 +59,7 @@ public class HomeActivity extends AppCompatActivity
         RecyclerView recyclerView = findViewById(R.id.rec_class);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        clsAdapter = new ClassesAdapter(this, listClasses);
+        clsAdapter = new ClassesAdapter(this, listKelas);
         recyclerView.setAdapter(clsAdapter);
     }
 

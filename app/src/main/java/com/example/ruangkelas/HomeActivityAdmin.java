@@ -24,12 +24,14 @@ import com.example.ruangkelas.data.factory.AppDatabase;
 import com.example.ruangkelas.data.kelasDAO;
 import com.example.ruangkelas.model.kelas;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HomeActivityAdmin extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    List<Classes> listClasses;
+    List<kelas> listKelas;
     public ClassesAdapter clsAdapter;
     EditText clsName;
     EditText clsSubject;
@@ -49,20 +51,12 @@ public class HomeActivityAdmin extends AppCompatActivity
         toggle.syncState();
 
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "id12007477_ruangkelas").build();
+                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
 
         navigationView.setNavigationItemSelectedListener(this);
-        listClasses = new ArrayList<>();
-        listClasses.add(new Classes("Kelas Pemrograman Mobile","Kelas Paralel","Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT"));
-        listClasses.add(new Classes("Kelas Pemrograman Internet","Kelas Paralel","I Putu Arya Dharmaadi, ST.,MT"));
-        listClasses.add(new Classes("Kelas Pemrograman","Kelas Paralel","I Made Sunia Raharja, S.Kom., M.Cs"));
-        listClasses.add(new Classes("Kelas Pemrograman Berorientasi Objek","Kelas Paralel","I Putu Arya Dharmaadi, ST.,MT"));
-        listClasses.add(new Classes("Kelas Internet of Things","Kelas Paralel","Kadek Suar Wibawa, ST, MT"));
-        listClasses.add(new Classes("Kelas Interpesonal Life Skill","Kelas Paralel","Prof. Dr. I Ketut Gede Darma Putra, S.Kom., M.T."));
-        listClasses.add(new Classes("Teknologi Basis Data","Kelas Paralel","Dwi Putra Githa, S.T., M.T."));
-        listClasses.add(new Classes("Pengolahan Citra Digital","Kelas Paralel","Ni Kadek Ayu Wirdiani, S.T., M.T."));
-        listClasses.add(new Classes("Rekayasa Perangkat Lunak","Kelas Paralel","Ni Kadek Dwi Rusjayanthi, S.T., M.T."));
-        listClasses.add(new Classes("Aplikasi Sosial Media","Kelas Paralel","I Putu Agus Eka Pratama, S.T., M.T."));
+        listKelas = new ArrayList<>();
+
+        listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
 
         showClasses();
     }
@@ -71,7 +65,7 @@ public class HomeActivityAdmin extends AppCompatActivity
         RecyclerView recyclerView = findViewById(R.id.rec_class);
         recyclerView.setHasFixedSize(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        clsAdapter = new ClassesAdapter(this, listClasses);
+        clsAdapter = new ClassesAdapter(this, listKelas);
         recyclerView.setAdapter(clsAdapter);
 
         clsName=(EditText) findViewById(R.id.classname);
@@ -85,17 +79,12 @@ public class HomeActivityAdmin extends AppCompatActivity
                 String newClsSubject=clsSubject.getText().toString();
                 String newClsAuthor=clsAuthor.getText().toString();
 
-                // add new item to arraylist
-                listClasses.add(new Classes("" + newClsName, "" + newClsSubject, "" + newClsAuthor));
-                // notify listview of data changed
-                clsAdapter.notifyDataSetChanged();
                 kelas kls = new kelas();
                 kls.setSubjekKelas(newClsSubject);
                 kls.setNamaKelas(newClsName);
                 kls.setAuthorKelas(newClsAuthor);
                 insertData(kls);
-                showData();
-
+                clsAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -117,23 +106,6 @@ public class HomeActivityAdmin extends AppCompatActivity
         }.execute();
     }
 
-    private void showData (){
-        new AsyncTask<Void, Void, String>(){
-            @Override
-            protected String doInBackground(Void... voids) {
-                // melakukan proses insert data
-                kelasDAO KelasDAO = db.KelasDAO();
-                List<kelas> items= KelasDAO.selectAllKelas();
-                String test = items.get(2).getNamaKelas();
-                return test;
-            }
-
-            @Override
-            protected void onPostExecute(String test) {
-                Toast.makeText(HomeActivityAdmin.this, test, Toast.LENGTH_SHORT).show();
-            }
-        }.execute();
-    }
 
     @Override
     public void onBackPressed() {
