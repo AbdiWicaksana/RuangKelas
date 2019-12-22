@@ -1,6 +1,7 @@
 package com.example.ruangkelas;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,14 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         holder.nameSender.setText(listTimeline.get(position).getNamaSender());
         holder.nameAnouncement.setText(listTimeline.get(position).getNamaAnouncement());
         holder.deskAnouncement.setText(listTimeline.get(position).getDescAnouncement());
+
+        holder.nameAnouncement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, CommentTimelineActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
         holder.tlRemove.setOnClickListener(new View.OnClickListener() {
             @Override

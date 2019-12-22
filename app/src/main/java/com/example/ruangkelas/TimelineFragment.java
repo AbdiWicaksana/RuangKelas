@@ -60,14 +60,6 @@ public class TimelineFragment extends Fragment {
 
         });
 
-        announce.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CommentTimelineActivity.class);
-                startActivity(intent);
-            }
-        });
-
         TextView buttonBckTimeline = v3.findViewById(R.id.bckTimeline);
         buttonBckTimeline.setOnClickListener(new View.OnClickListener() {
             @Override

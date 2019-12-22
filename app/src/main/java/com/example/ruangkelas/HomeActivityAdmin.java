@@ -1,8 +1,10 @@
 package com.example.ruangkelas;
 
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.ruangkelas.data.factory.AppDatabase;
+import com.example.ruangkelas.data.kelasDAO;
+import com.example.ruangkelas.model.kelas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +35,7 @@ public class HomeActivityAdmin extends AppCompatActivity
     EditText clsSubject;
     EditText clsAuthor;
     public static final String my_shared_preferences = "my_shared_preferences";
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +47,18 @@ public class HomeActivityAdmin extends AppCompatActivity
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "id12007477_ruangkelas").build();
+
+        Button btnTes = findViewById(R.id.tes);
+        btnTes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showData();
+            }
+        });
+
         navigationView.setNavigationItemSelectedListener(this);
         listClasses = new ArrayList<>();
         listClasses.add(new Classes("Kelas Pemrograman Mobile","Kelas Paralel","Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT"));
@@ -71,14 +92,60 @@ public class HomeActivityAdmin extends AppCompatActivity
                 String newClsName=clsName.getText().toString();
                 String newClsSubject=clsSubject.getText().toString();
                 String newClsAuthor=clsAuthor.getText().toString();
+
                 // add new item to arraylist
                 listClasses.add(new Classes("" + newClsName, "" + newClsSubject, "" + newClsAuthor));
                 // notify listview of data changed
                 clsAdapter.notifyDataSetChanged();
+                kelas kls = new kelas();
+                kls.setSubjekKelas(newClsSubject);
+                kls.setNamaKelas(newClsName);
+                kls.setAuthorKelas(newClsAuthor);
+                insertData(kls);
+                showData();
+
             }
         });
     }
 
+    private void insertData(final kelas Kelas){
+
+        new AsyncTask<Void, Void, Long>(){
+            @Override
+            protected Long doInBackground(Void... voids) {
+                // melakukan proses insert data
+                long status = db.KelasDAO().insertKelas(Kelas);
+                return status;
+            }
+
+            @Override
+            protected void onPostExecute(Long status) {
+                Toast.makeText(HomeActivityAdmin.this, "status row "+status, Toast.LENGTH_SHORT).show();
+            }
+        }.execute();
+    }
+
+    private void showData (){
+        new AsyncTask<Void, Void, String>(){
+            @Override
+            protected String doInBackground(Void... voids) {
+                // melakukan proses insert data
+                kelasDAO KelasDAO = db.KelasDAO();
+                List<kelas> items= KelasDAO.selectAllKelas();
+                String test = items.get(2).getNamaKelas();
+                return test;
+            }
+
+            @Override
+            protected void onPostExecute(String test) {
+                Toast.makeText(HomeActivityAdmin.this, test, Toast.LENGTH_SHORT).show();
+            }
+        }.execute();
+
+
+
+
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -124,4 +191,5 @@ public class HomeActivityAdmin extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
