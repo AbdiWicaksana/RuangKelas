@@ -56,9 +56,9 @@ public class HomeActivity extends AppCompatActivity
 
     private String SELECT_URL = Server.URL + "select_photo.php";
 
-    public static final String TAG_ID           = "id";
-    public static final String TAG_NAMA         = "nama";
-    public static final String TAG_EMAIL          = "email";
+    public static final String TAG_ID = "id";
+    public static final String TAG_NAMA = "nama";
+    public static final String TAG_EMAIL = "email";
     private static final String TAG_PHOTO = "photo";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
