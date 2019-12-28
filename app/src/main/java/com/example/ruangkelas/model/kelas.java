@@ -3,18 +3,20 @@ package com.example.ruangkelas.model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.ForeignKey;
 
 import java.io.Serializable;
 
-@Entity(tableName = "tb_kelas")
+@Entity(tableName = "kelas")
 public class kelas implements Serializable {
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     public int kelasid;
 
     @ColumnInfo(name = "nama_kelas")
     public String namaKelas;
 
-    @ColumnInfo(name = "subjek_kelas")
+    @ColumnInfo(name = "subject_kelas")
     public String subjekKelas;
 
     @ColumnInfo(name = "author_kelas")

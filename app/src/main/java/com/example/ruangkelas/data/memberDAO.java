@@ -7,21 +7,21 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.example.ruangkelas.model.kelas;
+import com.example.ruangkelas.model.member;
 
 @Dao
-public interface kelasDAO {
+public interface memberDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long insertKelas(kelas Kelas);
+    long insertMember(member Member);
 
     @Update
-    int updateKelas(kelas Kelas);
+    int updateMember(member Member);
 
     @Delete
-    void deleteKelas(kelas Kelas);
+    void deleteMember(member Member);
 
-    @Query("SELECT * FROM kelas")
-    kelas[] readDataKelas();
+    @Query("SELECT * FROM member")
+    member[] readDataMember();
 
 }
