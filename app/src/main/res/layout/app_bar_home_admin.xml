@@ -88,28 +88,11 @@
                 android:hint="Subject"/>
         </android.support.design.widget.TextInputLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColorHint="@color/colorAccent"
-            android:id="@+id/inputAuthor">
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/classAuthor"
-                android:layout_below="@+id/classSubject"
-                android:textSize="13dp"
-                android:ems="10"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:hint="Author"/>
-        </android.support.design.widget.TextInputLayout>
-
         <Button
             android:id="@+id/saveclass"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_below="@id/classAuthor"
+            android:layout_below="@id/classname"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="10dp"

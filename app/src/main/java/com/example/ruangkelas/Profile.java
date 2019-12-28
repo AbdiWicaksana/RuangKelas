@@ -135,7 +135,19 @@ public class Profile extends AppCompatActivity {
                         String photo = (jObj.getString(TAG_PHOTO));
 
                         if (!id.isEmpty()) {
-                            Picasso.with(Profile.this).load(photo).centerCrop().fit().into(photo_profile);
+
+                            Picasso.Builder builder = new Picasso.Builder(Profile.this);
+                            builder.listener(new Picasso.Listener()
+                            {
+                                @Override
+                                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
+                                {
+                                    exception.printStackTrace();
+                                }
+                            });
+                            builder.build().load(photo).into(photo_profile);
+//                            Picasso.with(Profile.this).load(photo).centerCrop().fit().into(photo_profile);
+                            Toast.makeText(Profile.this, photo, Toast.LENGTH_LONG).show();
 
                         } else {
                             Toast.makeText(Profile.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();

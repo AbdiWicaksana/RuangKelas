@@ -47,11 +47,11 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         String getKelasNama = listKelas.get(position).getNamaKelas();
         String getKelasSubjek = listKelas.get(position).getSubjekKelas();
-        String getKelasAuthor = listKelas.get(position).getAuthorKelas();
+//        String getKelasAuthor = listKelas.get(position).getAuthorKelas();
 
         holder.kelasNama.setText(getKelasNama);
         holder.kelasSubjek.setText(getKelasSubjek);
-        holder.kelasAuthor.setText(getKelasAuthor);
+//        holder.kelasAuthor.setText(getKelasAuthor);
         holder.kelasNama.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -98,7 +98,7 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
 
         TextView kelasNama;
         TextView kelasSubjek;
-        TextView kelasAuthor;
+//        TextView kelasAuthor;
         TextView kelasRemove;
 
 
@@ -107,7 +107,7 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
 
             kelasNama = (TextView) itemView.findViewById(R.id.namaClasses);
             kelasSubjek = (TextView) itemView.findViewById(R.id.subjectClasses);
-            kelasAuthor = (TextView) itemView.findViewById(R.id.authorClasses);
+//            kelasAuthor = (TextView) itemView.findViewById(R.id.authorClasses);
             kelasRemove = (TextView) itemView.findViewById(R.id.rmvClass);
         }
     }

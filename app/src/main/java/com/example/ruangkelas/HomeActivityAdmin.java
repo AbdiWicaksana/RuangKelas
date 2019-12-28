@@ -1,5 +1,6 @@
 package com.example.ruangkelas;
 
+import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +12,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -20,24 +23,64 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.ruangkelas.app.AppController;
+import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.data.factory.AppDatabase;
 import com.example.ruangkelas.data.kelasDAO;
 import com.example.ruangkelas.model.kelas;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeActivityAdmin extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private RecyclerView kList;
+
+    private LinearLayoutManager linearLayoutManager;
+    private DividerItemDecoration dividerItemDecoration;
+    private List<Kelas> kelasList;
+    private RecyclerView.Adapter adapter;
+
     List<kelas> listKelas;
     public ClassesAdapter clsAdapter;
     EditText clsName;
     EditText clsSubject;
     EditText clsAuthor;
+    ProgressDialog pDialog;
+    int success;
+    Intent intent;
+    String id;
+    SharedPreferences sharedPreferences;
+
     public static final String my_shared_preferences = "my_shared_preferences";
     private AppDatabase db;
+
+    private static final String url_add = Server.URL + "add_kelas.php";
+    private static final String url_get = Server.URL + "get_kelas.php";
+    private static final String TAG = HomeActivityAdmin.class.getSimpleName();
+
+    public static final String TAG_ID = "id";
+
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+
+    String tag_json_obj = "json_obj_req";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +93,24 @@ public class HomeActivityAdmin extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        kList = findViewById(R.id.rec_class);
+
+        kelasList = new ArrayList<>();
+        adapter = new KelasAdapter(getApplicationContext(),kelasList);
+
+        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        dividerItemDecoration = new DividerItemDecoration(kList.getContext(), linearLayoutManager.getOrientation());
+
+        kList.setHasFixedSize(true);
+        kList.setLayoutManager(linearLayoutManager);
+        kList.addItemDecoration(dividerItemDecoration);
+        kList.setAdapter(adapter);
+
+        clsName=(EditText) findViewById(R.id.classname);
+        clsSubject=(EditText) findViewById(R.id.classSubject);
+        Button buttonSave = findViewById(R.id.saveclass);
+
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
 
@@ -58,53 +119,73 @@ public class HomeActivityAdmin extends AppCompatActivity
 
         listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
 
-        showClasses();
-    }
+        getData();
 
-    private void showClasses() {
-        RecyclerView recyclerView = findViewById(R.id.rec_class);
-        recyclerView.setHasFixedSize(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        clsAdapter = new ClassesAdapter(this, listKelas);
-        recyclerView.setAdapter(clsAdapter);
-
-        clsName=(EditText) findViewById(R.id.classname);
-        clsSubject=(EditText) findViewById(R.id.classSubject);
-        clsAuthor=(EditText) findViewById(R.id.classAuthor);
-        Button buttonSave = findViewById(R.id.saveclass);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String newClsName=clsName.getText().toString();
-                String newClsSubject=clsSubject.getText().toString();
-                String newClsAuthor=clsAuthor.getText().toString();
 
-                kelas kls = new kelas();
-                kls.setSubjekKelas(newClsSubject);
-                kls.setNamaKelas(newClsName);
-                kls.setAuthorKelas(newClsAuthor);
-                insertData(kls);
-                clsAdapter.notifyDataSetChanged();
+                sharedPreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
+                id = sharedPreferences.getString(TAG_ID, null);
+                String nama_kelas=clsName.getText().toString();
+                String subject_kelas=clsSubject.getText().toString();
+
+                addKelas(id, nama_kelas, subject_kelas);
+
             }
         });
+
+
+
+//        showClasses();
     }
 
-    private void insertData(final kelas Kelas){
+//    private void showClasses() {
+//        RecyclerView recyclerView = findViewById(R.id.rec_class);
+//        recyclerView.setHasFixedSize(false);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        clsAdapter = new ClassesAdapter(this, listKelas);
+//        recyclerView.setAdapter(clsAdapter);
+//
+//        clsName=(EditText) findViewById(R.id.classname);
+//        clsSubject=(EditText) findViewById(R.id.classSubject);
+////        clsAuthor=(EditText) findViewById(R.id.classAuthor);
+//        Button buttonSave = findViewById(R.id.saveclass);
+//        buttonSave.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String newClsName=clsName.getText().toString();
+//                String newClsSubject=clsSubject.getText().toString();
+////                String newClsAuthor=clsAuthor.getText().toString();
+//
+////                kelas kls = new kelas();
+////                kls.setSubjekKelas(newClsSubject);
+////                kls.setNamaKelas(newClsName);
+////                kls.setAuthorKelas(newClsAuthor);
+////                insertData(kls);
+////                clsAdapter.notifyDataSetChanged();
+//
+//
+//            }
+//        });
+//    }
 
-        new AsyncTask<Void, Void, Long>(){
-            @Override
-            protected Long doInBackground(Void... voids) {
-                // melakukan proses insert data
-                long status = db.KelasDAO().insertKelas(Kelas);
-                return status;
-            }
-
-            @Override
-            protected void onPostExecute(Long status) {
-                Toast.makeText(HomeActivityAdmin.this, "status row "+status, Toast.LENGTH_SHORT).show();
-            }
-        }.execute();
-    }
+//    private void insertData(final kelas Kelas){
+//
+//        new AsyncTask<Void, Void, Long>(){
+//            @Override
+//            protected Long doInBackground(Void... voids) {
+//                // melakukan proses insert data
+//                long status = db.KelasDAO().insertKelas(Kelas);
+//                return status;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Long status) {
+//                Toast.makeText(HomeActivityAdmin.this, "status row "+status, Toast.LENGTH_SHORT).show();
+//            }
+//        }.execute();
+//    }
 
 
     @Override
@@ -115,6 +196,122 @@ public class HomeActivityAdmin extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void addKelas(final String id, final String nama_kelas, final String subject_kelas) {
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
+        pDialog.setMessage("Register ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST, url_add, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "Daftar Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
+
+                    // Check for error node in json
+                    if (success == 1) {
+
+                        Log.e("Successfully Daftar!", jObj.toString());
+
+                        Toast.makeText(getApplicationContext(),
+                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                        clsName.setText("");
+                        clsSubject.setText("");
+
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+                hideDialog();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", id);
+                params.put("nama_kelas", nama_kelas);
+                params.put("subject_kelas", subject_kelas);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
+    }
+
+    private void getData() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url_get, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        Kelas kelas = new Kelas();
+                        kelas.setId(jsonObject.getInt("id"));
+                        kelas.setNama_kelas(jsonObject.getString("nama_kelas"));
+                        kelas.setSubject_kelas(jsonObject.getString("subject_kelas"));
+                        kelas.setAuthor_kelas(jsonObject.getString("author_kelas"));
+
+                        kelasList.add(kelas);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        progressDialog.dismiss();
+                    }
+                }
+                adapter.notifyDataSetChanged();
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+                progressDialog.dismiss();
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
