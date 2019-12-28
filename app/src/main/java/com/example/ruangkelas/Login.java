@@ -58,7 +58,7 @@ public class Login extends AppCompatActivity {
 
     SharedPreferences sharedpreferences;
     Boolean session = false;
-    String id, username, nama, nim, email;
+    String id, username, nama, nim, email,role;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
 
@@ -91,14 +91,17 @@ public class Login extends AppCompatActivity {
         nim = sharedpreferences.getString(TAG_NIM, null);
         email = sharedpreferences.getString(TAG_EMAIL, null);
         username = sharedpreferences.getString(TAG_USERNAME, null);
+        role = sharedpreferences.getString(TAG_ROLE,null);
 
         if (session) {
-            Intent intent = new Intent(Login.this, HomeActivity.class);
+            Intent intent = new Intent(Login.this,
+                    role.equals("Admin") ? HomeActivityAdmin.class : HomeActivity.class);
             intent.putExtra(TAG_ID, id);
             intent.putExtra(TAG_USERNAME, username);
             intent.putExtra(TAG_NAMA, nama);
             intent.putExtra(TAG_NIM, nim);
             intent.putExtra(TAG_EMAIL, email);
+            intent.putExtra(TAG_ROLE, role);
             finish();
             startActivity(intent);
         }
