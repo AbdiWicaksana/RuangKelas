@@ -2,6 +2,7 @@ package com.example.ruangkelas;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Movie;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,21 +36,26 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        Glide.with(context)
-                .asBitmap()
-                .load(listComment.get(position).getFotoPengCom())
-                .into(holder.fotoPembuatCom);
-        holder.namaPembuatCom.setText(listComment.get(position).getNamaPengCom());
-        holder.isiCom.setText(listComment.get(position).getComPeng());
 
-        holder.comRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listComment.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position,listComment.size());
-            }
-        });
+        Comment comment = listComment.get(position);
+
+        holder.namaPembuatCom.setText(comment.getNamaPengCom());
+        holder.isiCom.setText(comment.getComPeng());
+//        Glide.with(context)
+//                .asBitmap()
+//                .load(listComment.get(position).getFotoPengCom())
+//                .into(holder.fotoPembuatCom);
+//        holder.namaPembuatCom.setText(listComment.get(position).getNamaPengCom());
+//        holder.isiCom.setText(listComment.get(position).getComPeng());
+//
+//        holder.comRemove.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                listComment.remove(position);
+//                notifyItemRemoved(position);
+//                notifyItemRangeChanged(position,listComment.size());
+//            }
+//        });
     }
 
     @Override

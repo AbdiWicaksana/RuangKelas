@@ -17,7 +17,7 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="50dp">
+            android:paddingBottom="70dp">
 
             <LinearLayout
                 android:id="@+id/linierbiru"
@@ -99,6 +99,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/txt_nama"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="3dp"
@@ -108,6 +109,7 @@
                                 android:textSize="16sp" />
 
                             <TextView
+                                android:id="@+id/txt_title"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:text="Judul"
@@ -118,6 +120,7 @@
                     </LinearLayout>
 
                     <TextView
+                        android:id="@+id/txt_announce"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -158,8 +161,7 @@
                             android:id="@+id/rec_comment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/announce"
-                            android:layout_marginTop="15dp" />
+                            android:layout_below="@+id/announce" />
 
                     </LinearLayout>
 
@@ -191,7 +193,7 @@
             android:orientation="horizontal">
 
             <EditText
-                android:id="@+id/text"
+                android:id="@+id/txt_comment"
                 android:layout_width="300dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="20dp"
@@ -203,7 +205,7 @@
                 android:textColor="@color/colorPrimary" />
 
             <ImageView
-                android:id="@+id/send"
+                android:id="@+id/btn_send"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="20dp"
