@@ -1,7 +1,9 @@
 package com.example.ruangkelas;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Announce;
+import com.example.ruangkelas.data.Timeline;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,12 +49,17 @@ public class TimelineFragment extends Fragment {
     EditText editTextNewTtlAnn;
     EditText editTextNewAnn;
     ProgressDialog pDialog;
+    String id_user;
+    SharedPreferences sharedpreferences;
     int success;
+
+    private RecyclerView tList;
 
     private LinearLayoutManager linearLayoutManager;
     private DividerItemDecoration dividerItemDecoration;
-    private List<Announce> announceList;
+    private List<Timeline> timelineList;
     private RecyclerView.Adapter adapter;
+
 
     private static final String url_add = Server.URL + "add_announce.php";
     private static final String url_get = Server.URL + "get_announce.php";
@@ -73,27 +81,52 @@ public class TimelineFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         v3 = inflater.inflate(R.layout.timeline_layout,container,false);
-        recyclerView = (RecyclerView) v3.findViewById(R.id.rec_pengumuman);
-        recyclerView.setHasFixedSize(true);
-        tlAdapter = new TimelineAdapter(getContext(), listTimeline);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(tlAdapter);
+//        recyclerView = (RecyclerView) v3.findViewById(R.id.rec_pengumuman);
+//        recyclerView.setHasFixedSize(true);
+//        tlAdapter = new TimelineAdapter(getContext(), listTimeline);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerView.setAdapter(tlAdapter);
         announce = (TextView) v3.findViewById(R.id.announce);
+
+        tList = v3.findViewById(R.id.rec_pengumuman);
+
+        timelineList = new ArrayList<>();
+        adapter = new TimelineAdapter(getActivity(),timelineList);
+
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        dividerItemDecoration = new DividerItemDecoration(tList.getContext(), linearLayoutManager.getOrientation());
+
+        tList.setHasFixedSize(true);
+        tList.setLayoutManager(linearLayoutManager);
+        tList.addItemDecoration(dividerItemDecoration);
+        tList.setAdapter(adapter);
+
 
 //        editTextNewSndr=(EditText) v3.findViewById(R.id.newPengirim);
         editTextNewTtlAnn=(EditText) v3.findViewById(R.id.newTitleAnnounce);
         editTextNewAnn=(EditText) v3.findViewById(R.id.newAnnounce);
         Button btAdd=(Button) v3.findViewById(R.id.saveTimeline);
 
-        String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
+        sharedpreferences = getActivity().getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
+        id_user = sharedpreferences.getString(TAG_ID, null);
+
+        final String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
+
+        getData(id_kelas);
 
         Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
         btAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v3) {
 //                String newSndr=editTextNewSndr.getText().toString();
+
                 String newTtlAnn=editTextNewTtlAnn.getText().toString();
                 String newAnn=editTextNewAnn.getText().toString();
+
+                Toast.makeText(getActivity(), id_user, Toast.LENGTH_LONG).show();
+
+                addAnnounce(id_user, id_kelas, newTtlAnn, newAnn);
                 // add new item to arraylist
 //                listTimeline.add(new Timeline("" + newSndr,"" + newTtlAnn, "" + newAnn,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
                 // notify listview of data changed
@@ -112,7 +145,7 @@ public class TimelineFragment extends Fragment {
         return v3;
     }
 
-    private void addMember(final String id_kelas, final String nim) {
+    private void addAnnounce(final String id_user, final String id_kelas, final String newTtlAnn, final String newAnn) {
         pDialog = new ProgressDialog(getActivity());
         pDialog.setCancelable(false);
         pDialog.setMessage("Loading ...");
@@ -137,7 +170,7 @@ public class TimelineFragment extends Fragment {
                         Toast.makeText(getActivity().getApplicationContext(),
                                 jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
-                        editTextNewNIM.setText("");
+//                        editTextNewNIM.setText("");
 
                     } else {
                         Toast.makeText(getActivity().getApplicationContext(),
@@ -166,8 +199,10 @@ public class TimelineFragment extends Fragment {
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("id_user", id_user);
                 params.put("id_kelas", id_kelas);
-                params.put("nim", nim);
+                params.put("title", newTtlAnn);
+                params.put("announce", newAnn);
 
                 return params;
             }
@@ -179,9 +214,10 @@ public class TimelineFragment extends Fragment {
     }
 
     private void getData(final String id_kelas) {
-        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
+        pDialog = new ProgressDialog(getActivity());
+        pDialog.setCancelable(false);
+        pDialog.setMessage("Loading ...");
+        showDialog();
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 url_get + "?id_kelas=" + id_kelas, new Response.Listener<JSONArray>() {
@@ -191,24 +227,26 @@ public class TimelineFragment extends Fragment {
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
 
-                        Member member = new Member();
-                        member.setNama(jsonObject.getString("nama"));
-                        member.setNim(jsonObject.getString("nim"));
+                        Timeline timeline = new Timeline();
+                        timeline.setId(jsonObject.getInt("id"));
+                        timeline.setNama_user(jsonObject.getString("nama"));
+                        timeline.setTitle(jsonObject.getString("title"));
+                        timeline.setAnnounce(jsonObject.getString("announce"));
 
-                        memberList.add(member);
+                        timelineList.add(timeline);
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        progressDialog.dismiss();
+                        pDialog.dismiss();
                     }
                 }
                 adapter.notifyDataSetChanged();
-                progressDialog.dismiss();
+                pDialog.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e("Volley", error.toString());
-                progressDialog.dismiss();
+                pDialog.dismiss();
             }
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
@@ -225,14 +263,14 @@ public class TimelineFragment extends Fragment {
             pDialog.dismiss();
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        listTimeline = new ArrayList<>();
-        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Jadwal Pengganti","Kuliah hari senin besok diganti ke hari rabu jam 10.00 WITA","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
-        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Tugas Tambahan","Kuliah hari senin besok Saya tidak bisa hadir harap untuk mengecek tugas di Assignment","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
-        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Kuliah Tambahan","Kuliah tambahan diadakan pada jumat jam 10.00 WITA","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
-        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Kuliah di Liburkan","Kuliah hari senin besok ditiadakan dan untuk korti mohon untuk mencari jadwal pengganti","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
-    }
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        listTimeline = new ArrayList<>();
+//        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Jadwal Pengganti","Kuliah hari senin besok diganti ke hari rabu jam 10.00 WITA","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+//        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Tugas Tambahan","Kuliah hari senin besok Saya tidak bisa hadir harap untuk mengecek tugas di Assignment","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+//        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Kuliah Tambahan","Kuliah tambahan diadakan pada jumat jam 10.00 WITA","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+//        listTimeline.add(new Timeline("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","Kuliah di Liburkan","Kuliah hari senin besok ditiadakan dan untuk korti mohon untuk mencari jadwal pengganti","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+//    }
 
 }

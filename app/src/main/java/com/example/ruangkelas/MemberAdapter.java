@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ruangkelas.data.Member;
@@ -43,10 +44,12 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textNama, textNIM;
+        public ImageView image_view;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
+            image_view = itemView.findViewById(R.id.image_view);
             textNama = itemView.findViewById(R.id.namaMember);
             textNIM = itemView.findViewById(R.id.nimMember);
         }
