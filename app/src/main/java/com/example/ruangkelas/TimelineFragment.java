@@ -130,7 +130,6 @@ public class TimelineFragment extends Fragment {
                 // add new item to arraylist
 //                listTimeline.add(new Timeline("" + newSndr,"" + newTtlAnn, "" + newAnn,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
                 // notify listview of data changed
-                tlAdapter.notifyDataSetChanged();
             }
 
         });

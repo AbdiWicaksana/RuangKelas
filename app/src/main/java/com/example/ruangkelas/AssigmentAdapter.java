@@ -12,17 +12,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.ruangkelas.data.Assignment;
 
 import java.util.List;
 
 public class AssigmentAdapter extends RecyclerView.Adapter<AssigmentAdapter.MyViewHolder> {
 
     Context context;
-    List<Assigment> listAssigment;
+    List<Assignment> listAssignment;
 
-    public AssigmentAdapter(Context context, List<Assigment> listAssigment) {
+    public AssigmentAdapter(Context context, List<Assignment> listAssignment) {
         this.context = context;
-        this.listAssigment = listAssigment;
+        this.listAssignment = listAssignment;
     }
 
     @Override
@@ -35,38 +36,39 @@ public class AssigmentAdapter extends RecyclerView.Adapter<AssigmentAdapter.MyVi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        Glide.with(context)
-                .asBitmap()
-                .load(listAssigment.get(position).getFotoAssigment())
-                .into(holder.fotoTugas);
-        holder.namaTugas.setText(listAssigment.get(position).getNamaAssigment());
-        holder.tanggalTugas.setText(listAssigment.get(position).getTanggalAssigment());
+        Assignment assignment = listAssignment.get(position);
+//        Glide.with(context)
+//                .asBitmap()
+//                .load(listAssigment.get(position).getFotoAssigment())
+//                .into(holder.fotoTugas);
+        holder.namaTugas.setText(listAssignment.get(position).getNama_assignment());
+        holder.tanggalTugas.setText(listAssignment.get(position).getDate_assignment());
 
-        holder.namaTugas.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, DetailAssigment.class);
-                intent.putExtra("link",listAssigment.get(position).getFotoAssigment());
-                intent.putExtra("nama",listAssigment.get(position).getNamaAssigment());
-                intent.putExtra("date",listAssigment.get(position).getTanggalAssigment());
-                intent.putExtra("detail",listAssigment.get(position).getDetailAssigment());
-                context.startActivity(intent);
-            }
-        });
-
-        holder.assignRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listAssigment.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position,listAssigment.size());
-            }
-        });
+//        holder.namaTugas.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(context, DetailAssigment.class);
+//                intent.putExtra("link",listAssigment.get(position).getFotoAssigment());
+//                intent.putExtra("nama",listAssigment.get(position).getNamaAssigment());
+//                intent.putExtra("date",listAssigment.get(position).getTanggalAssigment());
+//                intent.putExtra("detail",listAssigment.get(position).getDetailAssigment());
+//                context.startActivity(intent);
+//            }
+//        });
+//
+//        holder.assignRemove.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                listAssigment.remove(position);
+//                notifyItemRemoved(position);
+//                notifyItemRangeChanged(position,listAssigment.size());
+//            }
+//        });
     }
 
     @Override
     public int getItemCount() {
-        return listAssigment.size();
+        return listAssignment.size();
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
