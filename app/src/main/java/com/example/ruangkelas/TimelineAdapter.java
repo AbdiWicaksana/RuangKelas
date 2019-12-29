@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.ruangkelas.data.Member;
@@ -38,10 +39,22 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
 
         Timeline timeline = listTimeline.get(position);
 
-        holder.nameSender.setText(String.valueOf(timeline.getNama_user()));
+        final String id_announce = timeline.getId().toString();
+
         holder.nameSender.setText(String.valueOf(timeline.getNama_user()));
         holder.nameAnouncement.setText(String.valueOf(timeline.getTitle()));
         holder.deskAnouncement.setText(String.valueOf(timeline.getAnnounce()));
+
+        holder.nameSender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, CommentTimelineActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("id_announce", id_announce);
+                Toast.makeText(context, id_announce, Toast.LENGTH_LONG).show();
+                context.startActivity(intent);
+            }
+        });
 
 
 //        Glide.with(context)

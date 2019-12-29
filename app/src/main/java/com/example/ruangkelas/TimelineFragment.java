@@ -19,11 +19,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
@@ -60,6 +62,14 @@ public class TimelineFragment extends Fragment {
     private List<Timeline> timelineList;
     private RecyclerView.Adapter adapter;
 
+    final private String FCM_API = "https://fcm.googleapis.com/fcm/send";
+    final private String serverKey = "key=" + "AAAAsZXkyqw:APA91bEo1lHbreDQqETM2MsovBtTD0-bRQFeiipIzwri1z-L2IAQxA_wW7AgyxPLYgJd2669boSb_jpKKcqp41ifPzzVMavBQcysRxdGRruGZyQ_i1T35CcZ1pFdp-XBbxFEZXR9cpP0";
+    final private String contentType = "application/json";
+    final String TAG_NOTIF = "NOTIFICATION TAG";
+
+    String NOTIFICATION_TITLE;
+    String NOTIFICATION_MESSAGE;
+    String TOPIC;
 
     private static final String url_add = Server.URL + "add_announce.php";
     private static final String url_get = Server.URL + "get_announce.php";
@@ -169,6 +179,26 @@ public class TimelineFragment extends Fragment {
                         Toast.makeText(getActivity().getApplicationContext(),
                                 jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
 
+                        String title_notif = "Announce";
+                        String message = "Pengumuman Ditambahkan";
+
+                        TOPIC = "/topics/userABC"; //topic has to match what the receiver subscribed to
+                        NOTIFICATION_TITLE = title_notif;
+                        NOTIFICATION_MESSAGE = message;
+
+                        JSONObject notification = new JSONObject();
+                        JSONObject notifcationBody = new JSONObject();
+                        try {
+                            notifcationBody.put("title", NOTIFICATION_TITLE);
+                            notifcationBody.put("message", NOTIFICATION_MESSAGE);
+
+                            notification.put("to", TOPIC);
+                            notification.put("data", notifcationBody);
+                        } catch (JSONException e) {
+                            Log.e(TAG, "onCreate: " + e.getMessage() );
+                        }
+                        sendNotification(notification);
+
 //                        editTextNewNIM.setText("");
 
                     } else {
@@ -260,6 +290,34 @@ public class TimelineFragment extends Fragment {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private void sendNotification(JSONObject notification) {
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(FCM_API, notification,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.i(TAG_NOTIF, "onResponse: " + response.toString());
+//                        edtTitle.setText("");
+//                        edtMessage.setText("");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), "Request error", Toast.LENGTH_LONG).show();
+                        Log.i(TAG_NOTIF, "onErrorResponse: Didn't work");
+                    }
+                }){
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Authorization", serverKey);
+                params.put("Content-Type", contentType);
+                return params;
+            }
+        };
+        MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(jsonObjectRequest);
     }
 
 //    @Override
