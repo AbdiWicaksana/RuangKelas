@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/bckReport"
+            android:id="@+id/bckEditProfile"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="center"

@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.data.factory.AppDatabase;
 import com.example.ruangkelas.data.kelasDAO;
 import com.example.ruangkelas.model.kelas;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,13 +61,13 @@ public class HomeActivityAdmin extends AppCompatActivity
 
     List<kelas> listKelas;
     public ClassesAdapter clsAdapter;
-    EditText clsName;
-    EditText clsSubject;
-    EditText clsAuthor;
+    EditText clsName, clsSubject, clsAuthor;
     ProgressDialog pDialog;
+    TextView txt_nama_header, txt_email_header;
+    ImageView photo_profile;
     int success;
     Intent intent;
-    String id;
+    String id, nama, email;
     SharedPreferences sharedPreferences;
 
     public static final String my_shared_preferences = "my_shared_preferences";
@@ -73,10 +75,13 @@ public class HomeActivityAdmin extends AppCompatActivity
 
     private static final String url_add = Server.URL + "add_kelas.php";
     private static final String url_get = Server.URL + "get_kelas.php";
+    private String SELECT_URL = Server.URL + "select_photo.php";
     private static final String TAG = HomeActivityAdmin.class.getSimpleName();
 
     public static final String TAG_ID = "id";
-
+    public static final String TAG_NAMA = "nama";
+    public static final String TAG_EMAIL = "email";
+    private static final String TAG_PHOTO = "photo";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 
@@ -88,6 +93,19 @@ public class HomeActivityAdmin extends AppCompatActivity
         setContentView(R.layout.activity_home_admin);
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        txt_nama_header = headerView.findViewById(R.id.txt_nama_header);
+        txt_email_header = headerView.findViewById(R.id.txt_email_header);
+        photo_profile = headerView.findViewById(R.id.photo_profile);
+
+        sharedPreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
+        id = sharedPreferences.getString(TAG_ID, null);
+        nama = sharedPreferences.getString(TAG_NAMA, null);
+        email = sharedPreferences.getString(TAG_EMAIL, null);
+
+        txt_nama_header.setText(nama);
+        txt_email_header.setText(email);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -135,7 +153,54 @@ public class HomeActivityAdmin extends AppCompatActivity
             }
         });
 
+        StringRequest strReq = new StringRequest(Request.Method.POST, SELECT_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "Response" + response.toString());
 
+                try {
+//                    Toast.makeText(getActivity(), user_id, Toast.LENGTH_LONG).show();
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
+
+                    if (success == 1) {
+                        Log.d("get photo profile", jObj.toString());
+                        String id = (jObj.getString(TAG_ID));
+                        String photo = (jObj.getString(TAG_PHOTO));
+
+                        if (!id.isEmpty()) {
+                            Picasso.with(HomeActivityAdmin.this).load(photo).centerCrop().fit().into(photo_profile);
+
+                        } else {
+                            Toast.makeText(HomeActivityAdmin.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                        }
+
+                    } else {
+                        Toast.makeText(HomeActivityAdmin.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Error: " + error.getMessage());
+                Toast.makeText(HomeActivityAdmin.this, error.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters ke post url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", id);
+
+                return params;
+            }
+
+        };
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
 
 //        showClasses();
     }
