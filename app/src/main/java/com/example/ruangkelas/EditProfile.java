@@ -1,6 +1,7 @@
 package com.example.ruangkelas;
 
 import android.app.ProgressDialog;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -17,6 +19,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.ruangkelas.app.AppController;
+import com.example.ruangkelas.data.factory.AppDatabase;
+import com.example.ruangkelas.model.member;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,6 +31,8 @@ import java.util.Map;
 import static com.example.ruangkelas.Login.my_shared_preferences;
 
 public class EditProfile extends AppCompatActivity {
+
+    private AppDatabase db;
 
     int success;
     ProgressDialog pDialog;
@@ -59,6 +65,9 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
+
         sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
         id = sharedpreferences.getString(TAG_ID, null);
 
@@ -75,6 +84,7 @@ public class EditProfile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                member Member = new member();
                 String nama = txt_nama.getText().toString();
                 String nim = txt_nim.getText().toString();
                 String email = txt_email.getText().toString();
@@ -82,6 +92,14 @@ public class EditProfile extends AppCompatActivity {
                 String password = txt_password.getText().toString();
 
                 checkUpdate(id, nama, nim, email, username, password);
+            }
+        });
+
+        TextView buttonBckEditProfile = findViewById(R.id.bckEditProfile);
+        buttonBckEditProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
 

@@ -55,7 +55,7 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
         holder.kelasNama.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, MainActivity.class);
+                Intent intent = new Intent(context, MainActivityUser.class);
                 context.startActivity(intent);
             }
         });

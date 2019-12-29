@@ -25,7 +25,7 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.MyVi
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
-        v = LayoutInflater.from(context).inflate(R.layout.item_mahasiswa, parent, false);
+        v = LayoutInflater.from(context).inflate(R.layout.item_mahasiswa_user, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(v);
         return myViewHolder;
     }
@@ -39,14 +39,6 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.MyVi
         holder.name.setText(listMahasiswa.get(position).getNamaMahasiswa());
         holder.nim.setText(listMahasiswa.get(position).getNim());
 
-        holder.mhsRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listMahasiswa.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position,listMahasiswa.size());
-            }
-        });
     }
 
     @Override
@@ -59,16 +51,13 @@ public class MahasiswaAdapter extends RecyclerView.Adapter<MahasiswaAdapter.MyVi
         TextView name;
         TextView nim;
         ImageView imageView;
-        TextView mhsRemove;
-
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            name = (TextView) itemView.findViewById(R.id.namaMember);
-            nim = (TextView) itemView.findViewById(R.id.nimMember);
-            imageView = (ImageView) itemView.findViewById(R.id.image_view);
-            mhsRemove = (TextView) itemView.findViewById(R.id.rmvMahasiswa);
+            name = (TextView) itemView.findViewById(R.id.namaMemberUser);
+            nim = (TextView) itemView.findViewById(R.id.nimMemberUser);
+            imageView = (ImageView) itemView.findViewById(R.id.image_view_user);
         }
     }
 }

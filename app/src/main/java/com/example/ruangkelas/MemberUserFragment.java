@@ -37,14 +37,14 @@ public class MemberUserFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        v = inflater.inflate(R.layout.member_layout,container,false);
+        v = inflater.inflate(R.layout.fragment_member_user,container,false);
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.rec_Mahasiswa);
+        recyclerView = (RecyclerView) v.findViewById(R.id.rec_MahasiswaUser);
         mhsAdapter = new MahasiswaAdapter(getContext(), listMahasiswa);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(mhsAdapter);
 
-        recyclerView2 = (RecyclerView) v.findViewById(R.id.rec_Dosen);
+        recyclerView2 = (RecyclerView) v.findViewById(R.id.rec_DosenUser);
         dsnAdapter = new DosenAdapter(getContext(), listDosen);
         recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView2.setAdapter(dsnAdapter);

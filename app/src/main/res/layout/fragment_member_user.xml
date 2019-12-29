@@ -64,7 +64,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/rec_Dosen"
+                android:id="@+id/rec_DosenUser"
                 android:layout_below="@+id/linierDosen">
             </android.support.v7.widget.RecyclerView>
 
@@ -72,7 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/linierMahasiswa"
-                android:layout_below="@id/rec_Dosen"
+                android:layout_below="@id/rec_DosenUser"
                 android:orientation="vertical">
 
                 <TextView
@@ -94,7 +94,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/rec_Mahasiswa"
+                android:id="@+id/rec_MahasiswaUser"
                 android:layout_below="@+id/linierMahasiswa">
             </android.support.v7.widget.RecyclerView>
 

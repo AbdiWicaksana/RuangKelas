@@ -46,6 +46,7 @@
         <activity android:name=".ContactUs" />
         <activity android:name=".Profile" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivityUser" />
         <activity android:name=".DetailAssigment" />
         <activity
             android:name=".SplashActivity"
