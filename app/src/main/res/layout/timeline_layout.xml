@@ -68,22 +68,7 @@
                     android:textColor="@color/design_default_color_primary"
                     android:layout_marginTop="10dp"
                     android:layout_marginLeft="10dp" />
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColorHint="@color/black">
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:id="@+id/newPengirim"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorPrimary"
-                        android:drawablePadding="20dp"
-                        android:ems="10"
-                        android:textSize="13dp"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="30dp"
-                        android:hint="Author"/>
-                </android.support.design.widget.TextInputLayout>
+
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

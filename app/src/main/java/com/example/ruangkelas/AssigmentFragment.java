@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,11 @@ public class AssigmentFragment extends Fragment {
         editTextNewDateAssign=(EditText) v2.findViewById(R.id.tanggalTugas);
         editTextNewDtlAssign=(EditText) v2.findViewById(R.id.detailTugas);
         Button btAddAssign=(Button) v2.findViewById(R.id.saveassignment);
+
+        String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
+
+        Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
+
         btAddAssign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

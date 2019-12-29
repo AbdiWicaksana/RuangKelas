@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,18 +43,22 @@ public class TimelineFragment extends Fragment {
         recyclerView.setAdapter(tlAdapter);
         announce = (TextView) v3.findViewById(R.id.announce);
 
-        editTextNewSndr=(EditText) v3.findViewById(R.id.newPengirim);
+//        editTextNewSndr=(EditText) v3.findViewById(R.id.newPengirim);
         editTextNewTtlAnn=(EditText) v3.findViewById(R.id.newTitleAnnounce);
         editTextNewAnn=(EditText) v3.findViewById(R.id.newAnnounce);
         Button btAdd=(Button) v3.findViewById(R.id.saveTimeline);
+
+        String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
+
+        Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
         btAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v3) {
-                String newSndr=editTextNewSndr.getText().toString();
+//                String newSndr=editTextNewSndr.getText().toString();
                 String newTtlAnn=editTextNewTtlAnn.getText().toString();
                 String newAnn=editTextNewAnn.getText().toString();
                 // add new item to arraylist
-                listTimeline.add(new Timeline("" + newSndr,"" + newTtlAnn, "" + newAnn,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+//                listTimeline.add(new Timeline("" + newSndr,"" + newTtlAnn, "" + newAnn,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
                 // notify listview of data changed
                 tlAdapter.notifyDataSetChanged();
             }

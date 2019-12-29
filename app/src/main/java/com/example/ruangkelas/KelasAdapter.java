@@ -18,6 +18,8 @@ public class KelasAdapter extends RecyclerView.Adapter<KelasAdapter.ViewHolder> 
     private Context context;
     private List<Kelas> list;
 
+    public static final String TAG_ID_KELAS       = "id_kelas";
+
     public KelasAdapter(Context context, List<Kelas> list) {
         this.context = context;
         this.list = list;
@@ -44,7 +46,8 @@ public class KelasAdapter extends RecyclerView.Adapter<KelasAdapter.ViewHolder> 
             public void onClick(View v) {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                Toast.makeText(context, id_kelas, Toast.LENGTH_LONG).show();
+                intent.putExtra("id_kelas", id_kelas);
+//                Toast.makeText(context, id_kelas, Toast.LENGTH_LONG).show();
                 context.startActivity(intent);
             }
         });
