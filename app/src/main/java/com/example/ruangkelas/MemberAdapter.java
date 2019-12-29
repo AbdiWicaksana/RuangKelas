@@ -31,8 +31,8 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         Member member = list.get(position);
 
-        holder.textNama.setText(member.getNama());
-        holder.textNIM.setText(member.getNim());
+        holder.textNama.setText(String.valueOf(member.getNama()));
+        holder.textNIM.setText(String.valueOf(member.getNim()));
 
     }
 
