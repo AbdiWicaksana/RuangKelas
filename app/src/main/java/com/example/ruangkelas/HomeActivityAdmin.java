@@ -2,11 +2,16 @@ package com.example.ruangkelas;
 
 import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -28,22 +33,19 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Kelas;
-import com.example.ruangkelas.data.factory.AppDatabase;
-import com.example.ruangkelas.data.kelasDAO;
-import com.example.ruangkelas.model.kelas;
+import com.example.ruangkelas.database.DbContract;
+import com.example.ruangkelas.database.DbHelper;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -58,8 +60,8 @@ public class HomeActivityAdmin extends AppCompatActivity
     private DividerItemDecoration dividerItemDecoration;
     private List<Kelas> kelasList;
     private RecyclerView.Adapter adapter;
+    ConnectivityManager conMgr;
 
-    List<kelas> listKelas;
     public ClassesAdapter clsAdapter;
     EditText clsName, clsSubject, clsAuthor;
     ProgressDialog pDialog;
@@ -71,7 +73,6 @@ public class HomeActivityAdmin extends AppCompatActivity
     SharedPreferences sharedPreferences;
 
     public static final String my_shared_preferences = "my_shared_preferences";
-    private AppDatabase db;
 
     private static final String url_add = Server.URL + "add_kelas.php";
     private static final String url_get = Server.URL + "get_kelas.php";
@@ -129,15 +130,18 @@ public class HomeActivityAdmin extends AppCompatActivity
         clsSubject=(EditText) findViewById(R.id.classSubject);
         Button buttonSave = findViewById(R.id.saveclass);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
-
         navigationView.setNavigationItemSelectedListener(this);
-        listKelas = new ArrayList<>();
 
-        listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
-
-        getData();
+        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        {
+            if (conMgr.getActiveNetworkInfo() != null
+                    && conMgr.getActiveNetworkInfo().isAvailable()
+                    && conMgr.getActiveNetworkInfo().isConnected()) {
+                    getData();
+            } else {
+                getOfflineData();
+            }
+        }
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -341,20 +345,29 @@ public class HomeActivityAdmin extends AppCompatActivity
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
+                        DbHelper dbHelper = new DbHelper(getApplicationContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
                         JSONObject jsonObject = response.getJSONObject(i);
 
-                        Kelas kelas = new Kelas();
-                        kelas.setId(jsonObject.getInt("id"));
-                        kelas.setNama_kelas(jsonObject.getString("nama_kelas"));
-                        kelas.setSubject_kelas(jsonObject.getString("subject_kelas"));
-                        kelas.setAuthor_kelas(jsonObject.getString("author_kelas"));
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_NAMA_KELAS, jsonObject.getString("nama_kelas"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS, jsonObject.getString("subject_kelas"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS, jsonObject.getString("author_kelas"));
 
-                        kelasList.add(kelas);
+                        try {
+                            db.insertOrThrow(DbContract.KelasEntry.TABLE_NAME, null, contentValues);
+                        } catch (SQLiteConstraintException error) {
+                            //
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         progressDialog.dismiss();
                     }
                 }
+                getOfflineData();
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
             }
@@ -367,6 +380,29 @@ public class HomeActivityAdmin extends AppCompatActivity
         });
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getOfflineData() {
+        DbHelper dbHelper = new DbHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                BaseColumns._ID,
+                DbContract.KelasEntry.COLUMN_NAMA_KELAS,
+                DbContract.KelasEntry.COLUMN_SUBJECT_KELAS,
+                DbContract.KelasEntry.COLUMN_AUTHOR_KELAS
+        };
+
+        Cursor cursor = db.query(DbContract.KelasEntry.TABLE_NAME,projection,null,null,null,null,null);
+
+        while (cursor.moveToNext()){
+            Kelas kelas = new Kelas();
+            kelas.setId(cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID)));
+            kelas.setNama_kelas(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.KelasEntry.COLUMN_NAMA_KELAS)));
+            kelas.setSubject_kelas(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS)));
+            kelas.setAuthor_kelas(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS)));
+
+            kelasList.add(kelas);
+        }
     }
 
     private void showDialog() {

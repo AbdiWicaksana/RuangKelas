@@ -19,8 +19,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.ruangkelas.app.AppController;
-import com.example.ruangkelas.data.factory.AppDatabase;
-import com.example.ruangkelas.model.member;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,11 +26,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.ruangkelas.Login.my_shared_preferences;
-
 public class EditProfile extends AppCompatActivity {
-
-    private AppDatabase db;
 
     int success;
     ProgressDialog pDialog;
@@ -65,9 +59,6 @@ public class EditProfile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
-
         sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
         id = sharedpreferences.getString(TAG_ID, null);
 
@@ -84,7 +75,6 @@ public class EditProfile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                member Member = new member();
                 String nama = txt_nama.getText().toString();
                 String nim = txt_nim.getText().toString();
                 String email = txt_email.getText().toString();

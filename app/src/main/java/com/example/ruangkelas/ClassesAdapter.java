@@ -1,24 +1,15 @@
 package com.example.ruangkelas;
 
-import android.app.AlertDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.ruangkelas.data.Kelas;
-import com.example.ruangkelas.model.kelas;
-import com.example.ruangkelas.data.factory.AppDatabase;
-
-import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -26,14 +17,11 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
 
     Context context;
     List<Kelas> listKelas;
-    private AppDatabase appDatabase;
 
     public ClassesAdapter(Context context, List<Kelas> listKelas) {
         this.context = context;
         this.listKelas = listKelas;
-        appDatabase = Room.databaseBuilder(
-                context.getApplicationContext(),
-                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
+
     }
 
     @Override

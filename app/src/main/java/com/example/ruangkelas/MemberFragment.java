@@ -3,6 +3,7 @@ package com.example.ruangkelas;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,9 +27,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
-import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.data.Member;
-import com.example.ruangkelas.data.factory.AppDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,9 +54,9 @@ public class MemberFragment extends Fragment {
     Intent intent;
     String id;
     SharedPreferences sharedPreferences;
+    ConnectivityManager conMgr;
 
     public static final String my_shared_preferences = "my_shared_preferences";
-    private AppDatabase db;
 
     private RecyclerView mList;
 

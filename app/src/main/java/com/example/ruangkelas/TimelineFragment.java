@@ -1,10 +1,14 @@
 package com.example.ruangkelas;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -31,6 +35,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Announce;
 import com.example.ruangkelas.data.Timeline;
+import com.example.ruangkelas.database.DbContract;
+import com.example.ruangkelas.database.DbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +60,8 @@ public class TimelineFragment extends Fragment {
     String id_user;
     SharedPreferences sharedpreferences;
     int success;
+
+    ConnectivityManager conMgr;
 
     private RecyclerView tList;
 
@@ -123,7 +131,16 @@ public class TimelineFragment extends Fragment {
 
         final String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
 
-        getData(id_kelas);
+        conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        {
+            if (conMgr.getActiveNetworkInfo() != null
+                    && conMgr.getActiveNetworkInfo().isAvailable()
+                    && conMgr.getActiveNetworkInfo().isConnected()) {
+                getData(id_kelas);
+            } else {
+
+            }
+        }
 
         Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
         btAdd.setOnClickListener(new View.OnClickListener() {
@@ -254,7 +271,17 @@ public class TimelineFragment extends Fragment {
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
+                        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
                         JSONObject jsonObject = response.getJSONObject(i);
+
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
+                        contentValues.put(DbContract.UsersEntry.COLUMN_NAMA, jsonObject.getString("nama_kelas"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS, jsonObject.getString("subject_kelas"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS, jsonObject.getString("author_kelas"));
+
 
                         Timeline timeline = new Timeline();
                         timeline.setId(jsonObject.getInt("id"));

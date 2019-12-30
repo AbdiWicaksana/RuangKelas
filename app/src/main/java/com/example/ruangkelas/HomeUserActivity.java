@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.EditText;
 
 import com.example.ruangkelas.data.Kelas;
-import com.example.ruangkelas.model.kelas;
 
 import java.util.ArrayList;
 import java.util.List;

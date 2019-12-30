@@ -134,7 +134,7 @@ public class Profile extends AppCompatActivity {
                         Log.d("get photo profile", jObj.toString());
                         String id = (jObj.getString(TAG_ID));
                         String photo = (jObj.getString(TAG_PHOTO));
-
+                        Log.e("ERROR", photo);
                         if (!id.isEmpty()) {
 
 //                            Picasso.Builder builder = new Picasso.Builder(Profile.this);
