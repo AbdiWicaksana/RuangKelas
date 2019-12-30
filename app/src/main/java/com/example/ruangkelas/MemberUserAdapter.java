@@ -24,7 +24,7 @@ public class MemberUserAdapter extends RecyclerView.Adapter<MemberUserAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.item_mahasiswa, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.item_mahasiswa_user, parent, false);
         return new ViewHolder(v);
     }
 
@@ -49,9 +49,9 @@ public class MemberUserAdapter extends RecyclerView.Adapter<MemberUserAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
 
-            image_view = itemView.findViewById(R.id.image_view);
-            textNama = itemView.findViewById(R.id.namaMember);
-            textNIM = itemView.findViewById(R.id.nimMember);
+            image_view = itemView.findViewById(R.id.image_view_user);
+            textNama = itemView.findViewById(R.id.namaMemberUser);
+            textNIM = itemView.findViewById(R.id.nimMemberUser);
         }
     }
 

@@ -35,12 +35,6 @@
             android:textColor="@color/colorPrimary"
             android:textStyle="bold"
             tools:text="Nama" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/rmvDosen"
-            android:layout_marginRight="25dp"
-            android:background="@drawable/delete" />
 
     </LinearLayout>
 </RelativeLayout>

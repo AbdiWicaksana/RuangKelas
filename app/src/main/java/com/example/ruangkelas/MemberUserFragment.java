@@ -85,7 +85,7 @@ public class MemberUserFragment extends Fragment {
         mList = v.findViewById(R.id.rec_MahasiswaUser);
 
         memberList = new ArrayList<>();
-        adapter = new MemberAdapter(getActivity().getApplicationContext(),memberList);
+        adapter = new MemberUserAdapter(getActivity().getApplicationContext(),memberList);
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);

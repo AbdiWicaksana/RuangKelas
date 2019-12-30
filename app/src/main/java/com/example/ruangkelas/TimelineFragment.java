@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -34,6 +36,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Announce;
+import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.data.Timeline;
 import com.example.ruangkelas.database.DbContract;
 import com.example.ruangkelas.database.DbHelper;
@@ -138,7 +141,7 @@ public class TimelineFragment extends Fragment {
                     && conMgr.getActiveNetworkInfo().isConnected()) {
                 getData(id_kelas);
             } else {
-
+                getOfflineData();
             }
         }
 
@@ -278,23 +281,22 @@ public class TimelineFragment extends Fragment {
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
-                        contentValues.put(DbContract.UsersEntry.COLUMN_NAMA, jsonObject.getString("nama_kelas"));
-                        contentValues.put(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS, jsonObject.getString("subject_kelas"));
-                        contentValues.put(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS, jsonObject.getString("author_kelas"));
+                        contentValues.put(DbContract.TimelineEntry.COLUMN_NAMA_USER, jsonObject.getString("nama"));
+                        contentValues.put(DbContract.TimelineEntry.COLUMN_TITLE, jsonObject.getString("title"));
+                        contentValues.put(DbContract.TimelineEntry.COLUMN_ANNOUNCE, jsonObject.getString("announce"));
 
+                        try {
+                            db.insertOrThrow(DbContract.TimelineEntry.TABLE_NAME, null, contentValues);
+                        } catch (SQLiteConstraintException error) {
+                            //
+                        }
 
-                        Timeline timeline = new Timeline();
-                        timeline.setId(jsonObject.getInt("id"));
-                        timeline.setNama_user(jsonObject.getString("nama"));
-                        timeline.setTitle(jsonObject.getString("title"));
-                        timeline.setAnnounce(jsonObject.getString("announce"));
-
-                        timelineList.add(timeline);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         pDialog.dismiss();
                     }
                 }
+                getOfflineData();
                 adapter.notifyDataSetChanged();
                 pDialog.dismiss();
             }
@@ -307,6 +309,29 @@ public class TimelineFragment extends Fragment {
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getOfflineData() {
+        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                BaseColumns._ID,
+                DbContract.TimelineEntry.COLUMN_NAMA_USER,
+                DbContract.TimelineEntry.COLUMN_TITLE,
+                DbContract.TimelineEntry.COLUMN_ANNOUNCE
+        };
+
+        Cursor cursor = db.query(DbContract.TimelineEntry.TABLE_NAME,projection,null,null,null,null,null);
+
+        while (cursor.moveToNext()){
+            Timeline timeline = new Timeline();
+            timeline.setId(cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID)));
+            timeline.setNama_user(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.TimelineEntry.COLUMN_NAMA_USER)));
+            timeline.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.TimelineEntry.COLUMN_TITLE)));
+            timeline.setAnnounce(cursor.getColumnName(cursor.getColumnIndexOrThrow(DbContract.TimelineEntry.COLUMN_ANNOUNCE)));
+
+            timelineList.add(timeline);
+        }
     }
 
     private void showDialog() {

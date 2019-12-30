@@ -2,11 +2,17 @@ package com.example.ruangkelas;
 
 import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -32,6 +38,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Kelas;
+import com.example.ruangkelas.database.DbContract;
+import com.example.ruangkelas.database.DbHelper;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -46,7 +54,6 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    public ClassesAdapter clsAdapter;
     public static final String my_shared_preferences = "my_shared_preferences";
 
     private RecyclerView kList;
@@ -62,6 +69,8 @@ public class HomeActivity extends AppCompatActivity
     String id, nama, email;
     int success;
     Intent intent;
+
+    ConnectivityManager conMgr;
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -117,7 +126,16 @@ public class HomeActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        getData(id);
+        conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        {
+            if (conMgr.getActiveNetworkInfo() != null
+                    && conMgr.getActiveNetworkInfo().isAvailable()
+                    && conMgr.getActiveNetworkInfo().isConnected()) {
+                getData(id);
+            } else {
+                getOfflineData();
+            }
+        }
 
 //        showClasses();
 
@@ -199,20 +217,29 @@ public class HomeActivity extends AppCompatActivity
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
+                        DbHelper dbHelper = new DbHelper(getApplicationContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
                         JSONObject jsonObject = response.getJSONObject(i);
 
-                        Kelas kelas = new Kelas();
-                        kelas.setId(jsonObject.getInt("id"));
-                        kelas.setNama_kelas(jsonObject.getString("nama_kelas"));
-                        kelas.setSubject_kelas(jsonObject.getString("subject_kelas"));
-                        kelas.setAuthor_kelas(jsonObject.getString("author_kelas"));
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_NAMA_KELAS, jsonObject.getString("nama_kelas"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS, jsonObject.getString("subject_kelas"));
+                        contentValues.put(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS, jsonObject.getString("author_kelas"));
 
-                        kelasList.add(kelas);
+                        try {
+                            db.insertOrThrow(DbContract.KelasEntry.TABLE_NAME, null, contentValues);
+                        } catch (SQLiteConstraintException error) {
+                            //
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         progressDialog.dismiss();
                     }
                 }
+                getOfflineData();
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
             }
@@ -225,6 +252,29 @@ public class HomeActivity extends AppCompatActivity
         });
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getOfflineData() {
+        DbHelper dbHelper = new DbHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                BaseColumns._ID,
+                DbContract.KelasEntry.COLUMN_NAMA_KELAS,
+                DbContract.KelasEntry.COLUMN_SUBJECT_KELAS,
+                DbContract.KelasEntry.COLUMN_AUTHOR_KELAS
+        };
+
+        Cursor cursor = db.query(DbContract.KelasEntry.TABLE_NAME,projection,null,null,null,null,null);
+
+        while (cursor.moveToNext()){
+            Kelas kelas = new Kelas();
+            kelas.setId(cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID)));
+            kelas.setNama_kelas(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.KelasEntry.COLUMN_NAMA_KELAS)));
+            kelas.setSubject_kelas(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS)));
+            kelas.setAuthor_kelas(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS)));
+
+            kelasList.add(kelas);
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

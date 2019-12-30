@@ -38,14 +38,6 @@ public class DosenAdapter extends RecyclerView.Adapter<DosenAdapter.MyViewHolder
                 .into(holder.dosenFoto);
         holder.dosenNama.setText(listDosen.get(position).getNamaDosen());
 
-        holder.dsnRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listDosen.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position,listDosen.size());
-            }
-        });
     }
 
     @Override
@@ -57,7 +49,6 @@ public class DosenAdapter extends RecyclerView.Adapter<DosenAdapter.MyViewHolder
 
         TextView dosenNama;
         ImageView dosenFoto;
-        TextView dsnRemove;
 
 
         public MyViewHolder(View itemView) {
@@ -65,7 +56,6 @@ public class DosenAdapter extends RecyclerView.Adapter<DosenAdapter.MyViewHolder
 
             dosenNama = (TextView) itemView.findViewById(R.id.namaDosen);
             dosenFoto = (ImageView) itemView.findViewById(R.id.image_dosen);
-            dsnRemove = (TextView) itemView.findViewById(R.id.rmvDosen);
         }
     }
 }

@@ -1,9 +1,15 @@
 package com.example.ruangkelas;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -29,6 +35,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Timeline;
+import com.example.ruangkelas.database.DbContract;
+import com.example.ruangkelas.database.DbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +60,8 @@ public class TimelineUserFragment extends Fragment {
     String id_user;
     SharedPreferences sharedpreferences;
     int success;
+
+    ConnectivityManager conMgr;
 
     private RecyclerView tList;
 
@@ -98,7 +108,7 @@ public class TimelineUserFragment extends Fragment {
         tList = v3.findViewById(R.id.rec_pengumuman);
 
         timelineList = new ArrayList<>();
-        adapter = new TimelineAdapter(getActivity(),timelineList);
+        adapter = new TimelineUserAdapter(getActivity(),timelineList);
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -114,7 +124,16 @@ public class TimelineUserFragment extends Fragment {
 
         final String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
 
-        getData(id_kelas);
+        conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        {
+            if (conMgr.getActiveNetworkInfo() != null
+                    && conMgr.getActiveNetworkInfo().isAvailable()
+                    && conMgr.getActiveNetworkInfo().isConnected()) {
+                getData(id_kelas);
+            } else {
+                getOfflineData();
+            }
+        }
 
         editTextNewTtlAnn=(EditText) v3.findViewById(R.id.newTitleAnnounce);
         editTextNewAnn=(EditText) v3.findViewById(R.id.newAnnounce);
@@ -245,20 +264,29 @@ public class TimelineUserFragment extends Fragment {
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
+                        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
                         JSONObject jsonObject = response.getJSONObject(i);
 
-                        Timeline timeline = new Timeline();
-                        timeline.setId(jsonObject.getInt("id"));
-                        timeline.setNama_user(jsonObject.getString("nama"));
-                        timeline.setTitle(jsonObject.getString("title"));
-                        timeline.setAnnounce(jsonObject.getString("announce"));
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
+                        contentValues.put(DbContract.TimelineEntry.COLUMN_NAMA_USER, jsonObject.getString("nama"));
+                        contentValues.put(DbContract.TimelineEntry.COLUMN_TITLE, jsonObject.getString("title"));
+                        contentValues.put(DbContract.TimelineEntry.COLUMN_ANNOUNCE, jsonObject.getString("announce"));
 
-                        timelineList.add(timeline);
+                        try {
+                            db.insertOrThrow(DbContract.TimelineEntry.TABLE_NAME, null, contentValues);
+                        } catch (SQLiteConstraintException error) {
+                            //
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         pDialog.dismiss();
                     }
                 }
+                getOfflineData();
                 adapter.notifyDataSetChanged();
                 pDialog.dismiss();
             }
@@ -271,6 +299,29 @@ public class TimelineUserFragment extends Fragment {
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getOfflineData() {
+        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                BaseColumns._ID,
+                DbContract.TimelineEntry.COLUMN_NAMA_USER,
+                DbContract.TimelineEntry.COLUMN_TITLE,
+                DbContract.TimelineEntry.COLUMN_ANNOUNCE
+        };
+
+        Cursor cursor = db.query(DbContract.TimelineEntry.TABLE_NAME,projection,null,null,null,null,null);
+
+        while (cursor.moveToNext()){
+            Timeline timeline = new Timeline();
+            timeline.setId(cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID)));
+            timeline.setNama_user(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.TimelineEntry.COLUMN_NAMA_USER)));
+            timeline.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.TimelineEntry.COLUMN_TITLE)));
+            timeline.setAnnounce(cursor.getColumnName(cursor.getColumnIndexOrThrow(DbContract.TimelineEntry.COLUMN_ANNOUNCE)));
+
+            timelineList.add(timeline);
+        }
     }
 
     private void showDialog() {

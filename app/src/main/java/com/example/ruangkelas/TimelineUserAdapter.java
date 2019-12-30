@@ -44,7 +44,7 @@ public class TimelineUserAdapter extends RecyclerView.Adapter<TimelineUserAdapte
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v3;
-        v3 = LayoutInflater.from(context).inflate(R.layout.timeline, parent, false);
+        v3 = LayoutInflater.from(context).inflate(R.layout.timeline_user, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(v3);
         return myViewHolder;
     }
@@ -94,17 +94,15 @@ public class TimelineUserAdapter extends RecyclerView.Adapter<TimelineUserAdapte
         TextView nameAnouncement;
         TextView deskAnouncement;
         ImageView imageSender;
-        TextView tlRemove;
 
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            nameSender = (TextView) itemView.findViewById(R.id.namaPengirim);
-            nameAnouncement = (TextView) itemView.findViewById(R.id.namaPengumuman);
-            deskAnouncement = (TextView) itemView.findViewById(R.id.deskPengumuman);
-            imageSender = (ImageView) itemView.findViewById(R.id.imagePengirim);
-            tlRemove = (TextView) itemView.findViewById(R.id.rmvTimeline);
+            nameSender = (TextView) itemView.findViewById(R.id.namaPengirimUser);
+            nameAnouncement = (TextView) itemView.findViewById(R.id.namaPengumumanUser);
+            deskAnouncement = (TextView) itemView.findViewById(R.id.deskPengumumanUser);
+            imageSender = (ImageView) itemView.findViewById(R.id.imagePengirimUser);
         }
     }
 }

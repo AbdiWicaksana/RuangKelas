@@ -27,7 +27,7 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
-        v = LayoutInflater.from(context).inflate(R.layout.home, parent, false);
+        v = LayoutInflater.from(context).inflate(R.layout.home_user, parent, false);
         MyViewHolder myViewHolder = new MyViewHolder(v);
         return myViewHolder;
     }
@@ -68,25 +68,6 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
             }
         });
 
-//        holder.kelasRemove.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                new AlertDialog.Builder(view.getContext())
-//                        .setTitle("Choose Action")
-//                        .setMessage("Are you sute want to delete this data ?")
-//
-//                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                onDeleteData(position);
-//                            }
-//                        })
-//
-//                        .setNegativeButton("No",null)
-//                        .show();
-//
-//            }
-//        });
     }
 
     @Override
@@ -94,20 +75,11 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
         return listKelas.size();
     }
 
-//    private void onDeleteData(int position){
-//        appDatabase.KelasDAO().deleteKelas(listKelas.get(position));
-//        listKelas.remove(position);
-//        notifyItemRemoved(position);
-//        notifyItemRangeChanged(position, listKelas.size());
-//        Toast.makeText(context, "Data Berhasil Dihapus", Toast.LENGTH_SHORT).show();
-//    }
-
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView kelasNama;
         TextView kelasSubjek;
         TextView kelasAuthor;
-        TextView kelasRemove;
 
 
         public MyViewHolder(View itemView) {
@@ -116,7 +88,6 @@ public class ClassesAdapter extends RecyclerView.Adapter<ClassesAdapter.MyViewHo
             kelasNama = (TextView) itemView.findViewById(R.id.namaClasses);
             kelasSubjek = (TextView) itemView.findViewById(R.id.subjectClasses);
             kelasAuthor = (TextView) itemView.findViewById(R.id.authorClasses);
-            kelasRemove = (TextView) itemView.findViewById(R.id.rmvClass);
         }
     }
 }

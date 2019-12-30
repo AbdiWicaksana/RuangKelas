@@ -97,6 +97,14 @@ public class CommentTimelineActivity extends AppCompatActivity{
         txt_comment = findViewById(R.id.txt_comment);
         btn_send = findViewById(R.id.btn_send);
 
+        TextView buttonBckComment = findViewById(R.id.bckComment);
+        buttonBckComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         final String id_announce = CommentTimelineActivity.this.getIntent().getStringExtra("id_announce");
 
         btn_send.setOnClickListener(new View.OnClickListener() {

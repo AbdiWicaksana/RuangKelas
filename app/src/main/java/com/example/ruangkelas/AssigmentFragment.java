@@ -1,9 +1,15 @@
 package com.example.ruangkelas;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -30,6 +36,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Assignment;
 import com.example.ruangkelas.data.Timeline;
+import com.example.ruangkelas.database.DbContract;
+import com.example.ruangkelas.database.DbHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,6 +61,8 @@ public class AssigmentFragment extends Fragment {
     String id_user;
     SharedPreferences sharedpreferences;
     int success;
+
+    ConnectivityManager conMgr;
 
     private RecyclerView aList;
 
@@ -117,7 +127,16 @@ public class AssigmentFragment extends Fragment {
 
         final String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
 
-        getData(id_kelas);
+        conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        {
+            if (conMgr.getActiveNetworkInfo() != null
+                    && conMgr.getActiveNetworkInfo().isAvailable()
+                    && conMgr.getActiveNetworkInfo().isConnected()) {
+                getData(id_kelas);
+            } else {
+                getOfflineData();
+            }
+        }
 
         Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
 
@@ -248,20 +267,29 @@ public class AssigmentFragment extends Fragment {
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
+                        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
                         JSONObject jsonObject = response.getJSONObject(i);
 
-                        Assignment assignment = new Assignment();
-                        assignment.setId(jsonObject.getInt("id"));
-                        assignment.setNama_assignment(jsonObject.getString("nama_assignment"));
-                        assignment.setDetail_assignment(jsonObject.getString("detail_assignment"));
-                        assignment.setDate_assignment(jsonObject.getString("date_assignment"));
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
+                        contentValues.put(DbContract.AssignmentEntry.COLUMN_NAMA_ASSIGNMENT, jsonObject.getString("nama_assignment"));
+                        contentValues.put(DbContract.AssignmentEntry.COLUMN_DETAIL_ASSIGNMENT, jsonObject.getString("detail_assignment"));
+                        contentValues.put(DbContract.AssignmentEntry.COLUMN_DATE_ASSIGNMENT, jsonObject.getString("date_assignment"));
 
-                        assignmentList.add(assignment);
+                        try {
+                            db.insertOrThrow(DbContract.AssignmentEntry.TABLE_NAME, null, contentValues);
+                        } catch (SQLiteConstraintException error) {
+                            //
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                         pDialog.dismiss();
                     }
                 }
+                getOfflineData();
                 adapter.notifyDataSetChanged();
                 pDialog.dismiss();
             }
@@ -274,6 +302,29 @@ public class AssigmentFragment extends Fragment {
         });
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
         requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getOfflineData() {
+        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        String[] projection = {
+                BaseColumns._ID,
+                DbContract.AssignmentEntry.COLUMN_NAMA_ASSIGNMENT,
+                DbContract.AssignmentEntry.COLUMN_DETAIL_ASSIGNMENT,
+                DbContract.AssignmentEntry.COLUMN_DATE_ASSIGNMENT
+        };
+
+        Cursor cursor = db.query(DbContract.AssignmentEntry.TABLE_NAME,projection,null,null,null,null,null);
+
+        while (cursor.moveToNext()){
+            Assignment assignment = new Assignment();
+            assignment.setId(cursor.getInt(cursor.getColumnIndexOrThrow(BaseColumns._ID)));
+            assignment.setNama_assignment(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.AssignmentEntry.COLUMN_NAMA_ASSIGNMENT)));
+            assignment.setDetail_assignment(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.AssignmentEntry.COLUMN_DETAIL_ASSIGNMENT)));
+            assignment.setDate_assignment(cursor.getString(cursor.getColumnIndexOrThrow(DbContract.AssignmentEntry.COLUMN_DATE_ASSIGNMENT)));
+
+            assignmentList.add(assignment);
+        }
     }
 
     private void showDialog() {
