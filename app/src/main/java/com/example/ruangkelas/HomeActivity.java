@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Kelas;
+import com.example.ruangkelas.data.factory.AppDatabase;
+import com.example.ruangkelas.model.kelas;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -44,8 +48,10 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    List<kelas> listKelas;
     public ClassesAdapter clsAdapter;
     public static final String my_shared_preferences = "my_shared_preferences";
+    private AppDatabase db;
 
     private RecyclerView kList;
 
@@ -113,7 +119,13 @@ public class HomeActivity extends AppCompatActivity
         kList.addItemDecoration(dividerItemDecoration);
         kList.setAdapter(adapter);
 
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
+
         navigationView.setNavigationItemSelectedListener(this);
+        listKelas = new ArrayList<>();
+
+        listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
 
         getData(id);
 
