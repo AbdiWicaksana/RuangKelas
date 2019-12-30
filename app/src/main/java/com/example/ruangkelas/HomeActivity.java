@@ -32,8 +32,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Kelas;
-import com.example.ruangkelas.data.factory.AppDatabase;
-import com.example.ruangkelas.model.kelas;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -48,10 +46,8 @@ import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    List<kelas> listKelas;
     public ClassesAdapter clsAdapter;
     public static final String my_shared_preferences = "my_shared_preferences";
-    private AppDatabase db;
 
     private RecyclerView kList;
 
@@ -119,13 +115,7 @@ public class HomeActivity extends AppCompatActivity
         kList.addItemDecoration(dividerItemDecoration);
         kList.setAdapter(adapter);
 
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
-
         navigationView.setNavigationItemSelectedListener(this);
-        listKelas = new ArrayList<>();
-
-        listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
 
         getData(id);
 
