@@ -14,13 +14,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.model.kelas;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HomeUserActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-        List<kelas> listClasses;
+        List<Kelas> listClasses;
         public ClassesAdapter clsAdapter;
         EditText clsName;
         EditText clsSubject;
@@ -40,18 +41,18 @@ public class HomeUserActivity extends AppCompatActivity implements NavigationVie
             navigationView.setNavigationItemSelectedListener(this);
             listClasses = new ArrayList<>();
 
-            showClasses();
+//            showClasses();
         }
 
-        private void showClasses() {
-            RecyclerView recyclerView = findViewById(R.id.rec_class);
-            recyclerView.setHasFixedSize(false);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            clsAdapter = new ClassesAdapter(this, listClasses);
-            recyclerView.setAdapter(clsAdapter);
-
-
-        }
+//        private void showClasses() {
+//            RecyclerView recyclerView = findViewById(R.id.rec_class);
+//            recyclerView.setHasFixedSize(false);
+//            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//            clsAdapter = new ClassesAdapter(this, listClasses);
+//            recyclerView.setAdapter(clsAdapter);
+//
+//
+//        }
 
         @Override
         public void onBackPressed() {

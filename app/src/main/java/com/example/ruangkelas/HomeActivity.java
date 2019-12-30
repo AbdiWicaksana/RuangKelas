@@ -1,5 +1,6 @@
 package com.example.ruangkelas;
 
+import android.app.ProgressDialog;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,14 +24,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
+import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.data.factory.AppDatabase;
 import com.example.ruangkelas.model.kelas;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,15 +53,24 @@ public class HomeActivity extends AppCompatActivity
     public static final String my_shared_preferences = "my_shared_preferences";
     private AppDatabase db;
 
+    private RecyclerView kList;
+
+    private LinearLayoutManager linearLayoutManager;
+    private DividerItemDecoration dividerItemDecoration;
+    private List<Kelas> kelasList;
+    private RecyclerView.Adapter adapter;
+
     TextView txt_nama_header, txt_email_header;
     ImageView photo_profile;
     SharedPreferences sharedpreferences;
     String id, nama, email;
     int success;
+    Intent intent;
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
     private String SELECT_URL = Server.URL + "select_photo.php";
+    private static final String url_get = Server.URL + "get_kelas_user.php";
 
     public static final String TAG_ID = "id";
     public static final String TAG_NAMA = "nama";
@@ -89,6 +105,20 @@ public class HomeActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        kList = findViewById(R.id.rec_class);
+
+        kelasList = new ArrayList<>();
+        adapter = new ClassesAdapter(getApplicationContext(),kelasList);
+
+        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        dividerItemDecoration = new DividerItemDecoration(kList.getContext(), linearLayoutManager.getOrientation());
+
+        kList.setHasFixedSize(true);
+        kList.setLayoutManager(linearLayoutManager);
+        kList.addItemDecoration(dividerItemDecoration);
+        kList.setAdapter(adapter);
+
         db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "id12007477_ruangkelas").allowMainThreadQueries().build();
 
@@ -97,7 +127,9 @@ public class HomeActivity extends AppCompatActivity
 
         listKelas.addAll(Arrays.asList(db.KelasDAO().readDataKelas()));
 
-        showClasses();
+        getData(id);
+
+//        showClasses();
 
         StringRequest strReq = new StringRequest(Request.Method.POST, SELECT_URL, new Response.Listener<String>() {
             @Override
@@ -115,7 +147,7 @@ public class HomeActivity extends AppCompatActivity
                         String photo = (jObj.getString(TAG_PHOTO));
 
                         if (!id.isEmpty()) {
-                            Picasso.with(HomeActivity.this).load(photo).centerCrop().fit().into(photo_profile);
+                            Picasso.get().load(photo).centerCrop().fit().into(photo_profile);
 
                         } else {
                             Toast.makeText(HomeActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
@@ -149,13 +181,13 @@ public class HomeActivity extends AppCompatActivity
         AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
     }
 
-    private void showClasses() {
-        RecyclerView recyclerView = findViewById(R.id.rec_class);
-        recyclerView.setHasFixedSize(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        clsAdapter = new ClassesAdapter(this, listKelas);
-        recyclerView.setAdapter(clsAdapter);
-    }
+//    private void showClasses() {
+//        RecyclerView recyclerView = findViewById(R.id.rec_class);
+//        recyclerView.setHasFixedSize(false);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+//        clsAdapter = new ClassesAdapter(this, listKelas);
+//        recyclerView.setAdapter(clsAdapter);
+//    }
 
     @Override
     public void onBackPressed() {
@@ -165,6 +197,44 @@ public class HomeActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void getData(final String id) {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url_get + "?id_user=" + id, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        Kelas kelas = new Kelas();
+                        kelas.setId(jsonObject.getInt("id"));
+                        kelas.setNama_kelas(jsonObject.getString("nama_kelas"));
+                        kelas.setSubject_kelas(jsonObject.getString("subject_kelas"));
+                        kelas.setAuthor_kelas(jsonObject.getString("author_kelas"));
+
+                        kelasList.add(kelas);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        progressDialog.dismiss();
+                    }
+                }
+                adapter.notifyDataSetChanged();
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+                progressDialog.dismiss();
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

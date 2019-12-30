@@ -169,7 +169,7 @@ public class HomeActivityAdmin extends AppCompatActivity
                         String photo = (jObj.getString(TAG_PHOTO));
 
                         if (!id.isEmpty()) {
-                            Picasso.with(HomeActivityAdmin.this).load(photo).centerCrop().fit().into(photo_profile);
+                            Picasso.get().load(photo).centerCrop().fit().into(photo_profile);
 
                         } else {
                             Toast.makeText(HomeActivityAdmin.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();

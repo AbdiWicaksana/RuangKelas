@@ -22,6 +22,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.bumptech.glide.Glide;
 import com.example.ruangkelas.app.AppController;
 import com.squareup.picasso.Picasso;
 
@@ -136,18 +137,19 @@ public class Profile extends AppCompatActivity {
 
                         if (!id.isEmpty()) {
 
-                            Picasso.Builder builder = new Picasso.Builder(Profile.this);
-                            builder.listener(new Picasso.Listener()
-                            {
-                                @Override
-                                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
-                                {
-                                    exception.printStackTrace();
-                                }
-                            });
-                            builder.build().load(photo).into(photo_profile);
-//                            Picasso.with(Profile.this).load(photo).centerCrop().fit().into(photo_profile);
-                            Toast.makeText(Profile.this, photo, Toast.LENGTH_LONG).show();
+//                            Picasso.Builder builder = new Picasso.Builder(Profile.this);
+//                            builder.listener(new Picasso.Listener()
+//                            {
+//                                @Override
+//                                public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception)
+//                                {
+//                                    exception.printStackTrace();
+//                                }
+//                            });
+//                            builder.build().load(photo).into(photo_profile);
+//                            Glide.with(Profile.this).asBitmap().load(photo).centerCrop().into(photo_profile);
+                            Picasso.get().load(photo).centerCrop().fit().into(photo_profile);
+//                            Toast.makeText(Profile.this, photo, Toast.LENGTH_LONG).show();
 
                         } else {
                             Toast.makeText(Profile.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();

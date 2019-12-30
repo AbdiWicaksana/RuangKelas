@@ -1,5 +1,6 @@
 package com.example.ruangkelas;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
@@ -12,15 +13,32 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.ruangkelas.data.Assignment;
 
 import java.util.List;
 
 public class AssignmentUserAdapter extends RecyclerView.Adapter<AssignmentUserAdapter.MyViewHolder> {
 
     Context context;
-    List<Assigment> listAssigment;
+    List<Assignment> listAssigment;
+    ProgressDialog pDialog;
+    int success;
 
-    public AssignmentUserAdapter(Context context, List<Assigment> listAssigment) {
+    private static final String TAG = CommentTimelineActivity.class.getSimpleName();
+
+    private static String url_delete       = Server.URL + "delete_assignment.php";
+
+    public static final String TAG_ID_ASSIGNMENT    = "id_announce";
+    public static final String TAG_NAMA             = "nama";
+    public static final String TAG_ASSIGNMENT       = "assignment";
+
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+
+    String tag_json_obj = "json_obj_req";
+
+
+    public AssignmentUserAdapter(Context context, List<Assignment> listAssigment) {
         this.context = context;
         this.listAssigment = listAssigment;
     }
@@ -35,21 +53,23 @@ public class AssignmentUserAdapter extends RecyclerView.Adapter<AssignmentUserAd
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        Glide.with(context)
-                .asBitmap()
-                .load(listAssigment.get(position).getFotoAssigment())
-                .into(holder.fotoTugas);
-        holder.namaTugas.setText(listAssigment.get(position).getNamaAssigment());
-        holder.tanggalTugas.setText(listAssigment.get(position).getTanggalAssigment());
+        Assignment assignment = listAssigment.get(position);
+
+        final String id_assignment = assignment.getId().toString();
+//        Glide.with(context)
+//                .asBitmap()
+//                .load(listAssigment.get(position).getFotoAssigment())
+//                .into(holder.fotoTugas);
+        holder.namaTugas.setText(listAssigment.get(position).getNama_assignment());
+        holder.tanggalTugas.setText(listAssigment.get(position).getDate_assignment());
 
         holder.namaTugas.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 Intent intent = new Intent(context, DetailAssigment.class);
-                intent.putExtra("link",listAssigment.get(position).getFotoAssigment());
-                intent.putExtra("nama",listAssigment.get(position).getNamaAssigment());
-                intent.putExtra("date",listAssigment.get(position).getTanggalAssigment());
-                intent.putExtra("detail",listAssigment.get(position).getDetailAssigment());
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("id_assignment", id_assignment);
+                Toast.makeText(context, id_assignment, Toast.LENGTH_LONG).show();
                 context.startActivity(intent);
             }
         });
