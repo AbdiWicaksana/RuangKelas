@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.example.ruangkelas.app.AppController;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,7 @@ public class Login extends AppCompatActivity {
     ConnectivityManager conMgr;
 
     private String url = Server.URL + "login.php";
+    private String url_token = Server.URL + "get_token.php";
 
     private static final String TAG = Login.class.getSimpleName();
 
@@ -53,12 +55,13 @@ public class Login extends AppCompatActivity {
     public final static String TAG_NIM = "nim";
     public final static String TAG_EMAIL = "email";
     public final static String TAG_ROLE = "role";
+    public final static String TAG_TOKEN = "token";
 
     String tag_json_obj = "json_obj_req";
 
     SharedPreferences sharedpreferences;
     Boolean session = false;
-    String id, username, nama, nim, email,role;
+    String id, username, nama, nim, email,role, token;
     public static final String my_shared_preferences = "my_shared_preferences";
     public static final String session_status = "session_status";
 
@@ -102,6 +105,7 @@ public class Login extends AppCompatActivity {
             intent.putExtra(TAG_NIM, nim);
             intent.putExtra(TAG_EMAIL, email);
             intent.putExtra(TAG_ROLE, role);
+            intent.putExtra(TAG_TOKEN, token);
             finish();
             startActivity(intent);
         }
@@ -185,6 +189,8 @@ public class Login extends AppCompatActivity {
                         editor.putString(TAG_ROLE,role);
                         editor.commit();
 
+                        addToken(id);
+
                         // Memanggil main activity
                         Intent intent = new Intent(Login.this,
                                 role.equals("Admin") ? HomeActivityAdmin.class : HomeActivity.class);
@@ -196,6 +202,76 @@ public class Login extends AppCompatActivity {
                         intent.putExtra(TAG_ROLE, role);
                         finish();
                         startActivity(intent);
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                    }
+
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+                hideDialog();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", username);
+                params.put("password", password);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
+    }
+
+    private void addToken(final String id) {
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
+        pDialog.setMessage("Logging in ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST, url_token, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "Login Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
+
+                    // Check for error node in json
+                    if (success == 1) {
+
+                        Log.e("Successfully Token!", jObj.toString());
+
+                        Toast.makeText(getApplicationContext(), jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.putBoolean(session_status, true);
+                        editor.putString(TAG_TOKEN,FirebaseInstanceId.getInstance().getToken());
+                        editor.commit();
+
                     } else {
                         Toast.makeText(getApplicationContext(),
                                 jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
@@ -224,8 +300,8 @@ public class Login extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("username", username);
-                params.put("password", password);
+                params.put("id", id);
+                params.put("token", FirebaseInstanceId.getInstance().getToken());
 
                 return params;
             }

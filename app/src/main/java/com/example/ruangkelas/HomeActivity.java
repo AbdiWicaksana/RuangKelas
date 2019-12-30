@@ -34,6 +34,7 @@ import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.data.factory.AppDatabase;
 import com.example.ruangkelas.model.kelas;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -52,6 +53,7 @@ public class HomeActivity extends AppCompatActivity
     public ClassesAdapter clsAdapter;
     public static final String my_shared_preferences = "my_shared_preferences";
     private AppDatabase db;
+    ProgressDialog pDialog;
 
     private RecyclerView kList;
 
@@ -71,11 +73,13 @@ public class HomeActivity extends AppCompatActivity
 
     private String SELECT_URL = Server.URL + "select_photo.php";
     private static final String url_get = Server.URL + "get_kelas_user.php";
+    private String url_delete_token = Server.URL + "delete_token.php";
 
     public static final String TAG_ID = "id";
     public static final String TAG_NAMA = "nama";
     public static final String TAG_EMAIL = "email";
     private static final String TAG_PHOTO = "photo";
+    private static final String TAG_TOKEN = "token";
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
 
@@ -96,6 +100,8 @@ public class HomeActivity extends AppCompatActivity
         id = sharedpreferences.getString(TAG_ID, null);
         nama = sharedpreferences.getString(TAG_NAMA, null);
         email = sharedpreferences.getString(TAG_EMAIL, null);
+        String token = sharedpreferences.getString(TAG_TOKEN, null);
+
 
         txt_nama_header.setText(nama);
         txt_email_header.setText(email);
@@ -261,6 +267,11 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_logout) {
             SharedPreferences sharedPreferences = getSharedPreferences(my_shared_preferences,
                     Context.MODE_PRIVATE);
+
+            sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
+            String token = sharedpreferences.getString(TAG_TOKEN, null);
+            deleteToken(token);
+
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();
             editor.commit();
@@ -272,4 +283,78 @@ public class HomeActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void deleteToken(final String token) {
+        pDialog = new ProgressDialog(this);
+        pDialog.setCancelable(false);
+        pDialog.setMessage("Logging in ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST, url_delete_token, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, "Login Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    success = jObj.getInt(TAG_SUCCESS);
+
+                    // Check for error node in json
+                    if (success == 1) {
+
+                        Log.e("Successfully Token!", jObj.toString());
+
+                        Toast.makeText(getApplicationContext(), jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(),
+                                jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
+
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();
+
+                hideDialog();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("token", token);
+
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_json_obj);
+    }
+
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
+    }
+
 }
