@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.ruangkelas.data.Timeline;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class TimelineUserAdapter extends RecyclerView.Adapter<TimelineUserAdapte
         holder.nameSender.setText(String.valueOf(timeline.getNama_user()));
         holder.nameAnouncement.setText(String.valueOf(timeline.getTitle()));
         holder.deskAnouncement.setText(String.valueOf(timeline.getAnnounce()));
+        Picasso.get().load(timeline.getPhoto()).centerCrop().fit().into(holder.photo);
 
         holder.nameSender.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,7 +95,7 @@ public class TimelineUserAdapter extends RecyclerView.Adapter<TimelineUserAdapte
         TextView nameSender;
         TextView nameAnouncement;
         TextView deskAnouncement;
-        ImageView imageSender;
+        ImageView imageSender, photo;
 
 
         public MyViewHolder(View itemView) {
@@ -102,7 +104,8 @@ public class TimelineUserAdapter extends RecyclerView.Adapter<TimelineUserAdapte
             nameSender = (TextView) itemView.findViewById(R.id.namaPengirimUser);
             nameAnouncement = (TextView) itemView.findViewById(R.id.namaPengumumanUser);
             deskAnouncement = (TextView) itemView.findViewById(R.id.deskPengumumanUser);
-            imageSender = (ImageView) itemView.findViewById(R.id.imagePengirimUser);
+//            imageSender = (ImageView) itemView.findViewById(R.id.imagePengirimUser);
+            photo = itemView.findViewById(R.id.photo_profile);
         }
     }
 }

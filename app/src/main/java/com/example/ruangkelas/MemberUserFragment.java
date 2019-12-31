@@ -130,6 +130,7 @@ public class MemberUserFragment extends Fragment {
                         Member member = new Member();
                         member.setNama(jsonObject.getString("nama"));
                         member.setNim(jsonObject.getString("nim"));
+                        member.setPhoto(jsonObject.getString("photo"));
 
                         memberList.add(member);
                     } catch (JSONException e) {

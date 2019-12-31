@@ -3,6 +3,7 @@ package com.example.ruangkelas.data;
 public class Announce {
     public String nama;
     public String nim;
+    public String photo;
 
     public Announce() {
 

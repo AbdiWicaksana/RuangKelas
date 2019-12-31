@@ -35,6 +35,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Assignment;
+import com.example.ruangkelas.data.Member;
 import com.example.ruangkelas.data.Timeline;
 import com.example.ruangkelas.database.DbContract;
 import com.example.ruangkelas.database.DbHelper;
@@ -267,17 +268,25 @@ public class AssigmentFragment extends Fragment {
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
+
                         DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
                         JSONObject jsonObject = response.getJSONObject(i);
+
+                        Assignment assignment = new Assignment();
+                        assignment.setId(jsonObject.getInt("id"));
+                        assignment.setNama_assignment(jsonObject.getString("nama_assignment"));
+                        assignment.setDetail_assignment(jsonObject.getString("detail_assignment"));
+                        assignment.setDate_assignment(jsonObject.getString("date_assignment"));
+                        assignment.setPhoto(jsonObject.getString("photo"));
+
+                        assignmentList.add(assignment);
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
                         contentValues.put(DbContract.AssignmentEntry.COLUMN_NAMA_ASSIGNMENT, jsonObject.getString("nama_assignment"));
                         contentValues.put(DbContract.AssignmentEntry.COLUMN_DETAIL_ASSIGNMENT, jsonObject.getString("detail_assignment"));
                         contentValues.put(DbContract.AssignmentEntry.COLUMN_DATE_ASSIGNMENT, jsonObject.getString("date_assignment"));
-
                         try {
                             db.insertOrThrow(DbContract.AssignmentEntry.TABLE_NAME, null, contentValues);
                         } catch (SQLiteConstraintException error) {
@@ -289,7 +298,7 @@ public class AssigmentFragment extends Fragment {
                         pDialog.dismiss();
                     }
                 }
-                getOfflineData();
+//                getOfflineData();
                 adapter.notifyDataSetChanged();
                 pDialog.dismiss();
             }

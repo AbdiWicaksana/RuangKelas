@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Member;
 import com.example.ruangkelas.data.Timeline;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +72,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
         holder.nameSender.setText(String.valueOf(timeline.getNama_user()));
         holder.nameAnouncement.setText(String.valueOf(timeline.getTitle()));
         holder.deskAnouncement.setText(String.valueOf(timeline.getAnnounce()));
+        Picasso.get().load(timeline.getPhoto()).centerCrop().fit().into(holder.photo);
 
         holder.nameSender.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,7 +128,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView nameSender, nameAnouncement, deskAnouncement;
-        ImageView imageSender;
+        ImageView imageSender, photo;
         TextView tlRemove;
 
 
@@ -136,8 +138,9 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
             nameSender = (TextView) itemView.findViewById(R.id.namaPengirim);
             nameAnouncement = (TextView) itemView.findViewById(R.id.namaPengumuman);
             deskAnouncement = (TextView) itemView.findViewById(R.id.deskPengumuman);
-            imageSender = (ImageView) itemView.findViewById(R.id.imagePengirim);
+//            imageSender = (ImageView) itemView.findViewById(R.id.imagePengirim);
             tlRemove = (TextView) itemView.findViewById(R.id.rmvTimeline);
+            photo = itemView.findViewById(R.id.photo_profile);
         }
     }
 

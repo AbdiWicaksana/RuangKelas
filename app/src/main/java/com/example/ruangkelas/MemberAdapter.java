@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ruangkelas.data.Member;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
 
         holder.textNama.setText(String.valueOf(member.getNama()));
         holder.textNIM.setText(String.valueOf(member.getNim()));
+        Picasso.get().load(member.getPhoto()).centerCrop().fit().into(holder.photo);
 
     }
 
@@ -44,14 +46,15 @@ public class MemberAdapter extends RecyclerView.Adapter<MemberAdapter.ViewHolder
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView textNama, textNIM;
-        public ImageView image_view;
+        public ImageView image_view, photo;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            image_view = itemView.findViewById(R.id.image_view);
+//            image_view = itemView.findViewById(R.id.image_view);
             textNama = itemView.findViewById(R.id.namaMember);
             textNIM = itemView.findViewById(R.id.nimMember);
+            photo = itemView.findViewById(R.id.photo_profile);
         }
     }
 

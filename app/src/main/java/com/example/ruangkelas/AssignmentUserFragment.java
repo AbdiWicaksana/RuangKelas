@@ -160,10 +160,20 @@ public class AssignmentUserFragment extends Fragment {
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
+
                         DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
                         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
                         JSONObject jsonObject = response.getJSONObject(i);
+
+                        Assignment assignment = new Assignment();
+                        assignment.setId(jsonObject.getInt("id"));
+                        assignment.setNama_assignment(jsonObject.getString("nama_assignment"));
+                        assignment.setDetail_assignment(jsonObject.getString("detail_assignment"));
+                        assignment.setDate_assignment(jsonObject.getString("date_assignment"));
+                        assignment.setPhoto(jsonObject.getString("photo"));
+
+                        assignmentList.add(assignment);
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
@@ -182,7 +192,7 @@ public class AssignmentUserFragment extends Fragment {
                         pDialog.dismiss();
                     }
                 }
-                getOfflineData();
+//                getOfflineData();
                 adapter.notifyDataSetChanged();
                 pDialog.dismiss();
             }

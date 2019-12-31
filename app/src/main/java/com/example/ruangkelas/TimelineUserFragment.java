@@ -264,10 +264,20 @@ public class TimelineUserFragment extends Fragment {
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
-                        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
-                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
                         JSONObject jsonObject = response.getJSONObject(i);
+
+                        Timeline timeline = new Timeline();
+                        timeline.setId(jsonObject.getInt("id"));
+                        timeline.setNama_user(jsonObject.getString("nama_user"));
+                        timeline.setTitle(jsonObject.getString("title"));
+                        timeline.setAnnounce(jsonObject.getString("announce"));
+                        timeline.setPhoto(jsonObject.getString("photo"));
+
+                        timelineList.add(timeline);
+
+                        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
@@ -286,7 +296,7 @@ public class TimelineUserFragment extends Fragment {
                         pDialog.dismiss();
                     }
                 }
-                getOfflineData();
+//                getOfflineData();
                 adapter.notifyDataSetChanged();
                 pDialog.dismiss();
             }

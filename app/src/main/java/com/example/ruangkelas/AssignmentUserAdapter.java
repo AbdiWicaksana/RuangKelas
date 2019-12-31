@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.ruangkelas.data.Assignment;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -62,6 +63,7 @@ public class AssignmentUserAdapter extends RecyclerView.Adapter<AssignmentUserAd
 //                .into(holder.fotoTugas);
         holder.namaTugas.setText(listAssigment.get(position).getNama_assignment());
         holder.tanggalTugas.setText(listAssigment.get(position).getDate_assignment());
+        Picasso.get().load(assignment.getPhoto()).centerCrop().fit().into(holder.photo);
 
         holder.namaTugas.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,9 +85,8 @@ public class AssignmentUserAdapter extends RecyclerView.Adapter<AssignmentUserAd
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView namaTugas;
-        TextView tanggalTugas;
-        ImageView fotoTugas;
+        TextView namaTugas,tanggalTugas;
+        ImageView fotoTugas, photo;
 
 
         public MyViewHolder(View itemView) {
@@ -93,7 +94,8 @@ public class AssignmentUserAdapter extends RecyclerView.Adapter<AssignmentUserAd
 
             namaTugas = (TextView) itemView.findViewById(R.id.nameTugasUser);
             tanggalTugas = (TextView) itemView.findViewById(R.id.dateTugasUser);
-            fotoTugas = (ImageView) itemView.findViewById(R.id.imageTugasUser);
+//            fotoTugas = (ImageView) itemView.findViewById(R.id.imageTugasUser);
+            photo = itemView.findViewById(R.id.photo_profile);
         }
     }
 }

@@ -35,11 +35,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.app.Activity.RESULT_OK;
+
 public class Profile extends AppCompatActivity {
 
     SharedPreferences sharedpreferences;
     TextView txt_nama, txt_nim;
     ImageView photo_profile;
+
     Button btn_foto;
     String id, nama, nim;
     SharedPreferences sharedPreferences;
@@ -265,7 +268,7 @@ public class Profile extends AppCompatActivity {
             sharedPreferences = Profile.this.getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
             id = sharedPreferences.getString(TAG_ID, null);
 
-//            String id = user_id;
+            String user_id = id;
 
             try {
                 //mengambil fambar dari Gallery
@@ -273,7 +276,7 @@ public class Profile extends AppCompatActivity {
                 // 512 adalah resolusi tertinggi setelah image di resize, bisa di ganti.
                 setToImageView(getResizedBitmap(bitmap, 512));
 
-                uploadImage(id);
+                uploadImage(user_id);
             } catch (IOException e) {
                 e.printStackTrace();
             }

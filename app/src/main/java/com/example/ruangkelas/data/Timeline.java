@@ -5,16 +5,18 @@ public class Timeline {
     public String nama_user;
     public String title;
     public String announce;
+    public String photo;
 
     public Timeline() {
 
     }
 
-    public Timeline(Integer id, String nama_user, String title, String announce) {
+    public Timeline(Integer id, String nama_user, String title, String announce, String photo) {
         this.id = id;
         this.nama_user = nama_user;
         this.title = title;
         this.announce = announce;
+        this.photo = photo;
     }
 
     public Integer getId() {
@@ -47,6 +49,14 @@ public class Timeline {
 
     public void setAnnounce(String announce) {
         this.announce = announce;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
 }

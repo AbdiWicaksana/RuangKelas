@@ -5,16 +5,18 @@ public class Assignment {
     public String nama_assignment;
     public String detail_assignment;
     public String date_assignment;
+    public String photo;
 
     public Assignment() {
 
     }
 
-    public Assignment   (Integer id, String nama_assignment, String detail_assignment, String date_assignment) {
+    public Assignment   (Integer id, String nama_assignment, String detail_assignment, String date_assignment, String photo) {
         this.id = id;
         this.nama_assignment = nama_assignment;
         this.detail_assignment = detail_assignment;
         this.date_assignment = date_assignment;
+        this.photo = photo;
     }
 
     public Integer getId() {
@@ -47,5 +49,13 @@ public class Assignment {
 
     public void setDate_assignment(String date_assignment) {
         this.date_assignment = date_assignment;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 import com.example.ruangkelas.app.AppController;
 import com.example.ruangkelas.data.Assignment;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +72,7 @@ public class AssigmentAdapter extends RecyclerView.Adapter<AssigmentAdapter.MyVi
 //                .into(holder.fotoTugas);
         holder.namaTugas.setText(listAssignment.get(position).getNama_assignment());
         holder.tanggalTugas.setText(listAssignment.get(position).getDate_assignment());
+        Picasso.get().load(assignment.getPhoto()).centerCrop().fit().into(holder.photo);
 
         holder.namaTugas.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,10 +121,8 @@ public class AssigmentAdapter extends RecyclerView.Adapter<AssigmentAdapter.MyVi
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView namaTugas;
-        TextView tanggalTugas;
-        ImageView fotoTugas;
-        TextView assignRemove;
+        TextView namaTugas, tanggalTugas, assignRemove;
+        ImageView fotoTugas, photo;
 
 
         public MyViewHolder(View itemView) {
@@ -130,7 +130,8 @@ public class AssigmentAdapter extends RecyclerView.Adapter<AssigmentAdapter.MyVi
 
             namaTugas = (TextView) itemView.findViewById(R.id.nameTugas);
             tanggalTugas = (TextView) itemView.findViewById(R.id.dateTugas);
-            fotoTugas = (ImageView) itemView.findViewById(R.id.imageTugas);
+//            fotoTugas = (ImageView) itemView.findViewById(R.id.imageTugas);
+            photo = itemView.findViewById(R.id.photo_profile);
             assignRemove = (TextView) itemView.findViewById(R.id.rmvAssign);
         }
     }
