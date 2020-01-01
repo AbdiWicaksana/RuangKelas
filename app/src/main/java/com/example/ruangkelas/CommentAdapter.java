@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
 
         holder.namaPembuatCom.setText(comment.getNamaPengCom());
         holder.isiCom.setText(comment.getComPeng());
+        Picasso.get().load(comment.getPhoto()).centerCrop().fit().into(holder.photo);
 //        Glide.with(context)
 //                .asBitmap()
 //                .load(listComment.get(position).getFotoPengCom())
@@ -65,7 +67,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView fotoPembuatCom;
+        ImageView fotoPembuatCom, photo;
         TextView namaPembuatCom;
         TextView isiCom;
         TextView comRemove;
@@ -74,7 +76,8 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            fotoPembuatCom = (ImageView) itemView.findViewById(R.id.imagePengirimCom);
+//            fotoPembuatCom = (ImageView) itemView.findViewById(R.id.imagePengirimCom);
+            photo = itemView.findViewById(R.id.photo_profile);
             namaPembuatCom = (TextView) itemView.findViewById(R.id.namaPengirimCom);
             isiCom = (TextView) itemView.findViewById(R.id.isiCom);
             comRemove = (TextView) itemView.findViewById(R.id.rmvCom);

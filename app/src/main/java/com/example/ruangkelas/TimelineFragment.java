@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -51,7 +52,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TimelineFragment extends Fragment {
+public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     View v3;
     RecyclerView recyclerView;
     List<Timeline> listTimeline;
@@ -63,6 +64,8 @@ public class TimelineFragment extends Fragment {
     ProgressDialog pDialog;
     String id_user;
     SharedPreferences sharedpreferences;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     int success;
 
     ConnectivityManager conMgr;
@@ -108,6 +111,9 @@ public class TimelineFragment extends Fragment {
 //        tlAdapter = new TimelineAdapter(getContext(), listTimeline);
 //        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        recyclerView.setAdapter(tlAdapter);
+        mSwipeRefreshLayout = v3.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
         announce = (TextView) v3.findViewById(R.id.announce);
 
         tList = v3.findViewById(R.id.rec_pengumuman);
@@ -146,6 +152,15 @@ public class TimelineFragment extends Fragment {
             }
         }
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                timelineList.clear();
+                getData(id_kelas);
+            }
+        });
+
         Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
         btAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +173,8 @@ public class TimelineFragment extends Fragment {
                 Toast.makeText(getActivity(), id_user, Toast.LENGTH_LONG).show();
 
                 addAnnounce(id_user, id_kelas, newTtlAnn, newAnn);
+
+
                 // add new item to arraylist
 //                listTimeline.add(new Timeline("" + newSndr,"" + newTtlAnn, "" + newAnn,"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
                 // notify listview of data changed
@@ -229,6 +246,7 @@ public class TimelineFragment extends Fragment {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    pDialog.dismiss();
                 }
 
             }
@@ -381,6 +399,12 @@ public class TimelineFragment extends Fragment {
             }
         };
         MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(false);
+
     }
 
 //    @Override

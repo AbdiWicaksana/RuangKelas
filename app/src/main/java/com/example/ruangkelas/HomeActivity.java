@@ -16,6 +16,7 @@ import android.provider.BaseColumns;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -53,10 +54,11 @@ import java.util.List;
 import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String my_shared_preferences = "my_shared_preferences";
 
     private RecyclerView kList;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private LinearLayoutManager linearLayoutManager;
     private DividerItemDecoration dividerItemDecoration;
@@ -96,6 +98,7 @@ public class HomeActivity extends AppCompatActivity
         txt_nama_header = headerView.findViewById(R.id.txt_nama_header);
         txt_email_header = headerView.findViewById(R.id.txt_email_header);
         photo_profile = headerView.findViewById(R.id.photo_profile);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
 
         sharedpreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
         id = sharedpreferences.getString(TAG_ID, null);
@@ -125,6 +128,7 @@ public class HomeActivity extends AppCompatActivity
         kList.setAdapter(adapter);
 
         navigationView.setNavigationItemSelectedListener(this);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         {
@@ -136,6 +140,15 @@ public class HomeActivity extends AppCompatActivity
                 getOfflineData();
             }
         }
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                kelasList.clear();
+                getData(id);
+            }
+        });
 
 //        showClasses();
 
@@ -311,5 +324,10 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 }

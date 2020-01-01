@@ -5,138 +5,144 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:id="@+id/linierbiru"
-                android:background="@drawable/gradient">
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:id="@+id/linierbiru"
+                    android:background="@drawable/gradient">
+
+                    <TextView
+                        android:id="@+id/bckTimeline"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="20dp"
+                        android:background="@drawable/back" />
+
+                    <TextView
+                        android:id="@+id/timeline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Timeline"
+                        android:layout_marginLeft="115dp"
+                        android:layout_gravity="center"
+                        android:textAllCaps="true"
+                        android:textSize="20dp"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/inputAnnounce"
+                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/linierbiru"
+                    android:orientation="vertical"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/linierbiru"
+                    android:id="@+id/layoutAnnounce">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Add Announce"
+                        android:textSize="20sp"
+                        android:textColor="@color/design_default_color_primary"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="10dp" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/black">
+                        <EditText
+                            android:layout_width="match_parent"
+                            android:id="@+id/newTitleAnnounce"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorPrimary"
+                            android:drawablePadding="20dp"
+                            android:ems="10"
+                            android:textSize="13dp"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:hint="Title"/>
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColorHint="@color/black">
+
+                        <EditText
+                            android:id="@+id/newAnnounce"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/classname"
+                            android:layout_marginLeft="30dp"
+                            android:layout_marginRight="30dp"
+                            android:drawablePadding="20dp"
+                            android:ems="10"
+                            android:hint="Announce"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="13dp" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/saveTimeline"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/button_home"
+                        android:text="Add"
+                        android:layout_marginBottom="20dp"
+                        android:textColor="@color/white" />
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/bckTimeline"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="20dp"
-                    android:background="@drawable/back" />
-
-                <TextView
-                    android:id="@+id/timeline"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Timeline"
-                    android:layout_marginLeft="115dp"
-                    android:layout_gravity="center"
-                    android:textAllCaps="true"
+                    android:layout_below="@+id/layoutAnnounce"
+                    android:id="@+id/announce"
+                    android:text="Announce"
                     android:textSize="20dp"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:id="@+id/inputAnnounce"
-                android:layout_margin="10dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/linierbiru"
-                android:orientation="vertical"/>
+                    android:layout_marginLeft="20dp"
+                    android:textColor="@color/design_default_color_primary"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/linierbiru"
-                android:id="@+id/layoutAnnounce">
-
-                <TextView
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rec_pengumuman"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Add Announce"
-                    android:textSize="20sp"
-                    android:textColor="@color/design_default_color_primary"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="10dp" />
+                    android:layout_below="@+id/announce"
+                    android:layout_marginTop="15dp" />
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColorHint="@color/black">
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:id="@+id/newTitleAnnounce"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorPrimary"
-                        android:drawablePadding="20dp"
-                        android:ems="10"
-                        android:textSize="13dp"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="30dp"
-                        android:hint="Title"/>
-                </android.support.design.widget.TextInputLayout>
+            </RelativeLayout>
+        </ScrollView>
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColorHint="@color/black">
-
-                    <EditText
-                        android:id="@+id/newAnnounce"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/classname"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginRight="30dp"
-                        android:drawablePadding="20dp"
-                        android:ems="10"
-                        android:hint="Announce"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="13dp" />
-                </android.support.design.widget.TextInputLayout>
-
-                <Button
-                    android:id="@+id/saveTimeline"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/button_home"
-                    android:text="Add"
-                    android:layout_marginBottom="20dp"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/layoutAnnounce"
-                android:id="@+id/announce"
-                android:text="Announce"
-                android:textSize="20dp"
-                android:layout_marginLeft="20dp"
-                android:textColor="@color/design_default_color_primary"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rec_pengumuman"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/announce"
-                android:layout_marginTop="15dp" />
-
-        </RelativeLayout>
-    </ScrollView>
-
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </android.support.constraint.ConstraintLayout>

@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MemberFragment extends Fragment {
+public class MemberFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     View v;
     RecyclerView recyclerView;
     RecyclerView recyclerView2;
@@ -55,6 +56,7 @@ public class MemberFragment extends Fragment {
     String id;
     SharedPreferences sharedPreferences;
     ConnectivityManager conMgr;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static final String my_shared_preferences = "my_shared_preferences";
 
@@ -109,6 +111,9 @@ public class MemberFragment extends Fragment {
         editTextNewNIM=(EditText) v.findViewById(R.id.newNIM);
         Button btAddMahasiswa=(Button) v.findViewById(R.id.saveMahasiswa);
 
+        mSwipeRefreshLayout = v.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
         final String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
         getData(id_kelas);
 
@@ -132,7 +137,15 @@ public class MemberFragment extends Fragment {
         recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView2.setAdapter(dsnAdapter);
 
-
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(true);
+                memberList.clear();
+                getData(id_kelas);
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        });
 
         TextView buttonBckMember = v.findViewById(R.id.bckMember);
         buttonBckMember.setOnClickListener(new View.OnClickListener() {
@@ -265,5 +278,10 @@ public class MemberFragment extends Fragment {
 
         listDosen = new ArrayList<>();
         listDosen.add(new Dosen("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 }

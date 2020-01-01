@@ -11,10 +11,12 @@ import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.BaseColumns;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -37,6 +39,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
+import com.example.ruangkelas.data.Assignment;
 import com.example.ruangkelas.data.Kelas;
 import com.example.ruangkelas.database.DbContract;
 import com.example.ruangkelas.database.DbHelper;
@@ -53,8 +56,9 @@ import java.util.List;
 import java.util.Map;
 
 public class HomeActivityAdmin extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
     private RecyclerView kList;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private LinearLayoutManager linearLayoutManager;
     private DividerItemDecoration dividerItemDecoration;
@@ -95,9 +99,11 @@ public class HomeActivityAdmin extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
+
         txt_nama_header = headerView.findViewById(R.id.txt_nama_header);
         txt_email_header = headerView.findViewById(R.id.txt_email_header);
         photo_profile = headerView.findViewById(R.id.photo_profile);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
 
         sharedPreferences = getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
         id = sharedPreferences.getString(TAG_ID, null);
@@ -131,6 +137,7 @@ public class HomeActivityAdmin extends AppCompatActivity
         Button buttonSave = findViewById(R.id.saveclass);
 
         navigationView.setNavigationItemSelectedListener(this);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         {
@@ -143,6 +150,15 @@ public class HomeActivityAdmin extends AppCompatActivity
             }
         }
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                kelasList.clear();
+                getData();
+            }
+        });
+
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,6 +169,9 @@ public class HomeActivityAdmin extends AppCompatActivity
                 String subject_kelas=clsSubject.getText().toString();
 
                 addKelas(id, nama_kelas, subject_kelas);
+
+                kelasList.clear();
+                getData();
 
             }
         });
@@ -345,29 +364,37 @@ public class HomeActivityAdmin extends AppCompatActivity
             public void onResponse(JSONArray response) {
                 for (int i = 0; i < response.length(); i++) {
                     try {
-                        DbHelper dbHelper = new DbHelper(getApplicationContext());
-                        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//                        DbHelper dbHelper = new DbHelper(getApplicationContext());
+//                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
                         JSONObject jsonObject = response.getJSONObject(i);
 
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
-                        contentValues.put(DbContract.KelasEntry.COLUMN_NAMA_KELAS, jsonObject.getString("nama_kelas"));
-                        contentValues.put(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS, jsonObject.getString("subject_kelas"));
-                        contentValues.put(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS, jsonObject.getString("author_kelas"));
+                        Kelas kelas = new Kelas();
+                        kelas.setId(jsonObject.getInt("id"));
+                        kelas.setNama_kelas(jsonObject.getString("nama_kelas"));
+                        kelas.setSubject_kelas(jsonObject.getString("subject_kelas"));
+                        kelas.setAuthor_kelas(jsonObject.getString("author_kelas"));
 
-                        try {
-                            db.insertOrThrow(DbContract.KelasEntry.TABLE_NAME, null, contentValues);
-                        } catch (SQLiteConstraintException error) {
-                            //
-                        }
+                        kelasList.add(kelas);
+
+//                        ContentValues contentValues = new ContentValues();
+//                        contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));
+//                        contentValues.put(DbContract.KelasEntry.COLUMN_NAMA_KELAS, jsonObject.getString("nama_kelas"));
+//                        contentValues.put(DbContract.KelasEntry.COLUMN_SUBJECT_KELAS, jsonObject.getString("subject_kelas"));
+//                        contentValues.put(DbContract.KelasEntry.COLUMN_AUTHOR_KELAS, jsonObject.getString("author_kelas"));
+//
+//                        try {
+//                            db.insertOrThrow(DbContract.KelasEntry.TABLE_NAME, null, contentValues);
+//                        } catch (SQLiteConstraintException error) {
+//                            //
+//                        }
 
                     } catch (JSONException e) {
                         e.printStackTrace();
                         progressDialog.dismiss();
                     }
                 }
-                getOfflineData();
+//                getOfflineData();
                 adapter.notifyDataSetChanged();
                 progressDialog.dismiss();
             }
@@ -451,4 +478,8 @@ public class HomeActivityAdmin extends AppCompatActivity
         return true;
     }
 
+    @Override
+    public void onRefresh() {
+//        getData();
+    }
 }

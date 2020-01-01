@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TimelineUserFragment extends Fragment {
+public class TimelineUserFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     View v3;
     RecyclerView recyclerView;
     List<Timeline> listTimeline;
@@ -55,6 +56,7 @@ public class TimelineUserFragment extends Fragment {
     EditText editTextNewSndr;
     EditText editTextNewTtlAnn;
     EditText editTextNewAnn;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     ProgressDialog pDialog;
     String id_user;
@@ -104,6 +106,8 @@ public class TimelineUserFragment extends Fragment {
         tlAdapter = new TimelineUserAdapter(getContext(), listTimeline);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(tlAdapter);
+        mSwipeRefreshLayout = v3.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         tList = v3.findViewById(R.id.rec_pengumuman);
 
@@ -152,6 +156,15 @@ public class TimelineUserFragment extends Fragment {
 //                tlAdapter.notifyDataSetChanged();
             }
 
+        });
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                timelineList.clear();
+                getData(id_kelas);
+            }
         });
 
         TextView buttonBckTimeline = v3.findViewById(R.id.bckTimeline);
@@ -206,6 +219,7 @@ public class TimelineUserFragment extends Fragment {
                             notification.put("data", notifcationBody);
                         } catch (JSONException e) {
                             Log.e(TAG, "onCreate: " + e.getMessage() );
+                            pDialog.dismiss();
                         }
                         sendNotification(notification);
 
@@ -218,6 +232,7 @@ public class TimelineUserFragment extends Fragment {
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    pDialog.dismiss();
                 }
 
             }
@@ -288,7 +303,7 @@ public class TimelineUserFragment extends Fragment {
                         try {
                             db.insertOrThrow(DbContract.TimelineEntry.TABLE_NAME, null, contentValues);
                         } catch (SQLiteConstraintException error) {
-                            //
+                            pDialog.dismiss();
                         }
 
                     } catch (JSONException e) {
@@ -370,6 +385,11 @@ public class TimelineUserFragment extends Fragment {
             }
         };
         MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 
 //    @Override

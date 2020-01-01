@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,7 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AssigmentFragment extends Fragment {
+public class AssigmentFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     View v2;
 //    RecyclerView recyclerView;
 //    List<Assigment> listAssigment;
@@ -61,6 +62,7 @@ public class AssigmentFragment extends Fragment {
     ProgressDialog pDialog;
     String id_user;
     SharedPreferences sharedpreferences;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     int success;
 
     ConnectivityManager conMgr;
@@ -123,6 +125,9 @@ public class AssigmentFragment extends Fragment {
         editTextNewDtlAssign=(EditText) v2.findViewById(R.id.detailTugas);
         Button btAddAssign=(Button) v2.findViewById(R.id.saveassignment);
 
+        mSwipeRefreshLayout = v2.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+
         sharedpreferences = getActivity().getSharedPreferences(Login.my_shared_preferences, Context.MODE_PRIVATE);
         id_user = sharedpreferences.getString(TAG_ID, null);
 
@@ -138,6 +143,15 @@ public class AssigmentFragment extends Fragment {
                 getOfflineData();
             }
         }
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                assignmentList.clear();
+                getData(id_kelas);
+            }
+        });
 
         Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
 
@@ -388,5 +402,10 @@ public class AssigmentFragment extends Fragment {
 //        listAssigment.add(new Assigment("Tugas Mockup Tugas Besar","1 Mei 2019","https://cdn4.iconfinder.com/data/icons/iready-symbols-arrows-vol-1/28/004_009_question_ask_help_support_circle1x-512.png","Buatlah mockup dari ide yang anda kemukakan dalam project tugas besar, tugas dikumpul ke email saya dengan kode 6YH-130-NIM"));
 //        listAssigment.add(new Assigment("Tugas Laporan Progress Tugas Besar","6 Mei 2019","https://cdn4.iconfinder.com/data/icons/iready-symbols-arrows-vol-1/28/004_009_question_ask_help_support_circle1x-512.png","Buatlah Laporan progress dari tugas besar yang kelompok anda kerjakan, tugas dikumpul ke email saya dengan kode 6YH-131-NIM"));
 //        listAssigment.add(new Assigment("Tugas Laporan Tugas Besar","18 Mei 2019","https://cdn4.iconfinder.com/data/icons/iready-symbols-arrows-vol-1/28/004_009_question_ask_help_support_circle1x-512.png","Kirimkan Laporan Project tugas besar yang kelompok anda kerjakan, tugas dikumpul ke email saya dengan kode 6YH-132-NIM"));
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 }

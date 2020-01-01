@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +25,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,14 +36,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CommentTimelineActivity extends AppCompatActivity{
+public class CommentTimelineActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
     List<Comment> listComment;
     public CommentAdapter comAdapter;
 
     int success;
     TextView txt_nama, txt_title, txt_announce;
     EditText txt_comment;
-    ImageView btn_send;
+    ImageView btn_send, photo_profile;
     ProgressDialog pDialog;
     SharedPreferences sharedpreferences;
     String id;
@@ -52,7 +54,7 @@ public class CommentTimelineActivity extends AppCompatActivity{
     private DividerItemDecoration dividerItemDecoration;
     private List<Comment> commentList;
     private RecyclerView.Adapter adapter;
-
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private static final String TAG = CommentTimelineActivity.class.getSimpleName();
 
@@ -65,6 +67,7 @@ public class CommentTimelineActivity extends AppCompatActivity{
     public static final String TAG_NAMA         = "nama";
     public static final String TAG_TITLE          = "title";
     public static final String TAG_ANNOUNCE       = "announce";
+    public static final String TAG_PHOTO       = "photo";
 
     private static final String TAG_SUCCESS = "success";
     private static final String TAG_MESSAGE = "message";
@@ -96,6 +99,9 @@ public class CommentTimelineActivity extends AppCompatActivity{
         txt_announce = findViewById(R.id.txt_announce);
         txt_comment = findViewById(R.id.txt_comment);
         btn_send = findViewById(R.id.btn_send);
+        photo_profile = findViewById(R.id.photo_profile);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         TextView buttonBckComment = findViewById(R.id.bckComment);
         buttonBckComment.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +122,15 @@ public class CommentTimelineActivity extends AppCompatActivity{
                 String comment = txt_comment.getText().toString();
 
                 addComment(id, comment, id_announce);
+            }
+        });
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                commentList.clear();
+                getData(id_announce);
             }
         });
 
@@ -147,6 +162,7 @@ public class CommentTimelineActivity extends AppCompatActivity{
                         Comment comment = new Comment();
                         comment.setNamaPengCom(jsonObject.getString("nama"));
                         comment.setComPeng(jsonObject.getString("comment"));
+                        comment.setPhoto(jsonObject.getString("photo"));
 
                         commentList.add(comment);
                     } catch (JSONException e) {
@@ -257,11 +273,13 @@ public class CommentTimelineActivity extends AppCompatActivity{
                         String nama = (jObj.getString(TAG_NAMA));
                         String title = (jObj.getString(TAG_TITLE));
                         String announce = (jObj.getString(TAG_ANNOUNCE));
+                        String photo = (jObj.getString(TAG_PHOTO));
 
                         if (!id_announce.isEmpty()) {
                             txt_nama.setText(nama);
                             txt_title.setText(title);
                             txt_announce.setText(announce);
+                            Picasso.get().load(photo).centerCrop().fit().into(photo_profile);
 
                         } else {
                             Toast.makeText(CommentTimelineActivity.this, jObj.getString(TAG_MESSAGE), Toast.LENGTH_LONG).show();
@@ -307,6 +325,11 @@ public class CommentTimelineActivity extends AppCompatActivity{
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 
 //    private void showComment() {

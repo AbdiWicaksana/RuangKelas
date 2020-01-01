@@ -3,16 +3,17 @@ package com.example.ruangkelas;
 public class Comment {
     private String namaPengCom;
     private String comPeng;
-    private String fotoPengCom;
+//    private String fotoPengCom;
+    private String photo;
 
     public Comment() {
 
     }
 
-    public Comment(String namaPengCom, String comPeng, String fotoPengCom) {
+    public Comment(String namaPengCom, String comPeng, String photo) {
         this.namaPengCom = namaPengCom;
         this.comPeng = comPeng;
-        this.fotoPengCom = fotoPengCom;
+        this.photo = photo;
     }
 
     public String getNamaPengCom() {
@@ -31,11 +32,11 @@ public class Comment {
         this.comPeng = comPeng;
     }
 
-    public String getFotoPengCom() {
-        return fotoPengCom;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setFotoPengCom(String fotoPengCom) {
-        this.fotoPengCom = fotoPengCom;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

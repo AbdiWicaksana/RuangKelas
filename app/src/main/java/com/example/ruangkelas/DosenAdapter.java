@@ -32,10 +32,10 @@ public class DosenAdapter extends RecyclerView.Adapter<DosenAdapter.MyViewHolder
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        Glide.with(context)
-                .asBitmap()
-                .load(listDosen.get(position).getFotoDosen())
-                .into(holder.dosenFoto);
+//        Glide.with(context)
+//                .asBitmap()
+//                .load(listDosen.get(position).getFotoDosen())
+//                .into(holder.photo);
         holder.dosenNama.setText(listDosen.get(position).getNamaDosen());
 
     }
@@ -48,14 +48,14 @@ public class DosenAdapter extends RecyclerView.Adapter<DosenAdapter.MyViewHolder
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView dosenNama;
-        ImageView dosenFoto;
+        ImageView photo;
 
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
             dosenNama = (TextView) itemView.findViewById(R.id.namaDosen);
-            dosenFoto = (ImageView) itemView.findViewById(R.id.image_dosen);
+            photo = (ImageView) itemView.findViewById(R.id.photo_profile);
         }
     }
 }
