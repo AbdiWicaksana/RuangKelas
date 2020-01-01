@@ -280,6 +280,8 @@ public class TimelineUserFragment extends Fragment implements SwipeRefreshLayout
                 for (int i = 0; i < response.length(); i++) {
                     try {
 
+                        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
+                        SQLiteDatabase db = dbHelper.getWritableDatabase();
                         JSONObject jsonObject = response.getJSONObject(i);
 
                         Timeline timeline = new Timeline();
@@ -290,9 +292,6 @@ public class TimelineUserFragment extends Fragment implements SwipeRefreshLayout
                         timeline.setPhoto(jsonObject.getString("photo"));
 
                         timelineList.add(timeline);
-
-                        DbHelper dbHelper = new DbHelper(getActivity().getApplicationContext());
-                        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(BaseColumns._ID, jsonObject.getInt("id"));

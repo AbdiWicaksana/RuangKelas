@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+import com.example.ruangkelas.data.Dosen;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -31,12 +32,14 @@ public class DosenAdapter extends RecyclerView.Adapter<DosenAdapter.MyViewHolder
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position) {
+    public void onBindViewHolder(MyViewHolder holder, int position) {
+        Dosen dosen = listDosen.get(position);
 //        Glide.with(context)
 //                .asBitmap()
 //                .load(listDosen.get(position).getFotoDosen())
 //                .into(holder.photo);
-        holder.dosenNama.setText(listDosen.get(position).getNamaDosen());
+        holder.nama.setText(listDosen.get(position).getNama());
+        Picasso.get().load(dosen.getPhoto()).centerCrop().fit().into(holder.photo);
 
     }
 
@@ -47,14 +50,14 @@ public class DosenAdapter extends RecyclerView.Adapter<DosenAdapter.MyViewHolder
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView dosenNama;
+        TextView nama;
         ImageView photo;
 
 
         public MyViewHolder(View itemView) {
             super(itemView);
 
-            dosenNama = (TextView) itemView.findViewById(R.id.namaDosen);
+            nama = (TextView) itemView.findViewById(R.id.namaDosen);
             photo = (ImageView) itemView.findViewById(R.id.photo_profile);
         }
     }

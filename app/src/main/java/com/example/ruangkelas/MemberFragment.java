@@ -28,6 +28,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ruangkelas.app.AppController;
+import com.example.ruangkelas.data.Dosen;
 import com.example.ruangkelas.data.Member;
 
 import org.json.JSONArray;
@@ -60,15 +61,17 @@ public class MemberFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     public static final String my_shared_preferences = "my_shared_preferences";
 
-    private RecyclerView mList;
+    private RecyclerView mList, dList;
 
-    private LinearLayoutManager linearLayoutManager;
-    private DividerItemDecoration dividerItemDecoration;
+    private LinearLayoutManager linearLayoutManager, linearLayoutManagerDosen;
+    private DividerItemDecoration dividerItemDecoration, dividerItemDecorationDosen;
     private List<Member> memberList;
-    private RecyclerView.Adapter adapter;
+    private List<Dosen> dosenList;
+    private RecyclerView.Adapter adapter, adapterDosen;
 
     private static final String url_add = Server.URL + "add_member.php";
     private static final String url_get = Server.URL + "get_member.php";
+    private static final String url_get_dosen = Server.URL + "get_dosen.php";
     private static final String TAG = HomeActivityAdmin.class.getSimpleName();
 
     public static final String TAG_ID = "id";
@@ -88,24 +91,42 @@ public class MemberFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
         v = inflater.inflate(R.layout.member_layout,container,false);
 
-        recyclerView = (RecyclerView) v.findViewById(R.id.rec_Mahasiswa);
-        mhsAdapter = new MahasiswaAdapter(getContext(), listMahasiswa);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(mhsAdapter);
+//        recyclerView = (RecyclerView) v.findViewById(R.id.rec_Mahasiswa);
+//        mhsAdapter = new MahasiswaAdapter(getContext(), listMahasiswa);
+//        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerView.setAdapter(mhsAdapter);
+//
+//        recyclerView2 = (RecyclerView) v.findViewById(R.id.rec_Dosen);
+//        dsnAdapter = new DosenAdapter(getContext(), listDosen);
+//        recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerView2.setAdapter(dsnAdapter);
 
         mList = v.findViewById(R.id.rec_Mahasiswa);
+        dList = v.findViewById(R.id.rec_Dosen);
 
         memberList = new ArrayList<>();
         adapter = new MemberAdapter(getActivity().getApplicationContext(),memberList);
+
+        dosenList = new ArrayList<>();
+        adapterDosen = new DosenAdapter(getActivity().getApplicationContext(),dosenList);
 
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         dividerItemDecoration = new DividerItemDecoration(mList.getContext(), linearLayoutManager.getOrientation());
 
+        linearLayoutManagerDosen = new LinearLayoutManager(getActivity());
+        linearLayoutManagerDosen.setOrientation(LinearLayoutManager.VERTICAL);
+        dividerItemDecorationDosen = new DividerItemDecoration(dList.getContext(), linearLayoutManagerDosen.getOrientation());
+
         mList.setHasFixedSize(true);
         mList.setLayoutManager(linearLayoutManager);
         mList.addItemDecoration(dividerItemDecoration);
         mList.setAdapter(adapter);
+
+        dList.setHasFixedSize(true);
+        dList.setLayoutManager(linearLayoutManagerDosen);
+        dList.addItemDecoration(dividerItemDecorationDosen);
+        dList.setAdapter(adapterDosen);
 
 //        editTextNewMahasiswa=(EditText) v.findViewById(R.id.newMahasiswa);
         editTextNewNIM=(EditText) v.findViewById(R.id.newNIM);
@@ -115,6 +136,8 @@ public class MemberFragment extends Fragment implements SwipeRefreshLayout.OnRef
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
         final String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
+
+        getDataDosen(id_kelas);
         getData(id_kelas);
 
         btAddMahasiswa.setOnClickListener(new View.OnClickListener() {
@@ -132,17 +155,14 @@ public class MemberFragment extends Fragment implements SwipeRefreshLayout.OnRef
             }
         });
 
-        recyclerView2 = (RecyclerView) v.findViewById(R.id.rec_Dosen);
-        dsnAdapter = new DosenAdapter(getContext(), listDosen);
-        recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView2.setAdapter(dsnAdapter);
-
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(true);
                 memberList.clear();
+                dosenList.clear();
                 getData(id_kelas);
+                getDataDosen(id_kelas);
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
@@ -261,6 +281,43 @@ public class MemberFragment extends Fragment implements SwipeRefreshLayout.OnRef
         requestQueue.add(jsonArrayRequest);
     }
 
+    private void getDataDosen(final String id_kelas) {
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                url_get_dosen + "?id_kelas=" + id_kelas, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        Dosen dosen = new Dosen();
+                        dosen.setNama(jsonObject.getString("nama"));
+                        dosen.setPhoto(jsonObject.getString("photo"));
+
+                        dosenList.add(dosen);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        progressDialog.dismiss();
+                    }
+                }
+                adapterDosen.notifyDataSetChanged();
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+                progressDialog.dismiss();
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(jsonArrayRequest);
+    }
+
     private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();
@@ -276,8 +333,8 @@ public class MemberFragment extends Fragment implements SwipeRefreshLayout.OnRef
         super.onCreate(savedInstanceState);
 //        listMahasiswa = new ArrayList<>();
 
-        listDosen = new ArrayList<>();
-        listDosen.add(new Dosen("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+//        listDosen = new ArrayList<>();
+//        listDosen.add(new Dosen("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
     }
 
     @Override

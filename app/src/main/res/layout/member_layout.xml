@@ -65,7 +65,7 @@
                         android:textAllCaps="true"
                         android:fontFamily="@font/roboto_black"
                         android:textAlignment="center"
-                        android:text="List Dosen"
+                        android:text="Dosen Pengampu"
                         android:textStyle="bold"
                         android:textColorHint="@color/colorAccent"
                         android:textColor="@color/colorPrimary"

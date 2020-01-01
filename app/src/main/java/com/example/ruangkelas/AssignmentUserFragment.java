@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AssignmentUserFragment extends Fragment {
+public class AssignmentUserFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     View v2;
 //    RecyclerView recyclerView;
 //    List<Assigment> listAssigment;
@@ -59,6 +60,7 @@ public class AssignmentUserFragment extends Fragment {
     ProgressDialog pDialog;
     String id_user;
     SharedPreferences sharedpreferences;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     int success;
 
     ConnectivityManager conMgr;
@@ -105,6 +107,8 @@ public class AssignmentUserFragment extends Fragment {
 //        recyclerView.setAdapter(assignAdapter);
 
         aList = v2.findViewById(R.id.rec_assigment_user);
+        mSwipeRefreshLayout = v2.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         assignmentList = new ArrayList<>();
         adapter = new AssignmentUserAdapter(getActivity(),assignmentList);
@@ -137,6 +141,15 @@ public class AssignmentUserFragment extends Fragment {
                 getOfflineData();
             }
         }
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                assignmentList.clear();
+                getData(id_kelas);
+            }
+        });
 
         TextView buttonBckAssign = v2.findViewById(R.id.bckAssign);
         buttonBckAssign.setOnClickListener(new View.OnClickListener() {
@@ -267,6 +280,11 @@ public class AssignmentUserFragment extends Fragment {
             }
         };
         MySingleton.getInstance(getActivity().getApplicationContext()).addToRequestQueue(jsonObjectRequest);
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 
 //    @Override

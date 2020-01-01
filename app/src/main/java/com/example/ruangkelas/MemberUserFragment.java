@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ruangkelas.data.Dosen;
 import com.example.ruangkelas.data.Member;
 
 import org.json.JSONArray;
@@ -30,7 +32,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MemberUserFragment extends Fragment {
+public class MemberUserFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     View v;
     RecyclerView recyclerView;
     RecyclerView recyclerView2;
@@ -46,18 +48,22 @@ public class MemberUserFragment extends Fragment {
     Intent intent;
     String id;
     SharedPreferences sharedPreferences;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     public static final String my_shared_preferences = "my_shared_preferences";
 
-    private RecyclerView mList;
+    private RecyclerView mList, dList;
 
-    private LinearLayoutManager linearLayoutManager;
-    private DividerItemDecoration dividerItemDecoration;
+    private LinearLayoutManager linearLayoutManager, linearLayoutManagerDosen;
+    private DividerItemDecoration dividerItemDecoration, dividerItemDecorationDosen;
     private List<Member> memberList;
-    private RecyclerView.Adapter adapter;
+    private List<Dosen> dosenList;
+    private RecyclerView.Adapter adapter, adapterDosen;
 
     private static final String url_add = Server.URL + "add_member.php";
     private static final String url_get = Server.URL + "get_member.php";
+    private static final String url_get_dosen = Server.URL + "get_dosen.php";
+
     private static final String TAG = HomeActivityAdmin.class.getSimpleName();
 
     public static final String TAG_ID = "id";
@@ -82,27 +88,55 @@ public class MemberUserFragment extends Fragment {
 //        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 //        recyclerView.setAdapter(mhsAdapter);
 
+//        recyclerView2 = (RecyclerView) v.findViewById(R.id.rec_DosenUser);
+//        dsnAdapter = new DosenAdapter(getContext(), listDosen);
+//        recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerView2.setAdapter(dsnAdapter);
+
         mList = v.findViewById(R.id.rec_MahasiswaUser);
+        dList = v.findViewById(R.id.rec_DosenUser);
+
+
+        mSwipeRefreshLayout = v.findViewById(R.id.swipe_refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
 
         memberList = new ArrayList<>();
         adapter = new MemberUserAdapter(getActivity().getApplicationContext(),memberList);
 
+        dosenList = new ArrayList<>();
+        adapterDosen = new DosenAdapter(getActivity().getApplicationContext(),dosenList);
+
         linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         dividerItemDecoration = new DividerItemDecoration(mList.getContext(), linearLayoutManager.getOrientation());
+
+        linearLayoutManagerDosen = new LinearLayoutManager(getActivity());
+        linearLayoutManagerDosen.setOrientation(LinearLayoutManager.VERTICAL);
+        dividerItemDecorationDosen = new DividerItemDecoration(dList.getContext(), linearLayoutManagerDosen.getOrientation());
 
         mList.setHasFixedSize(true);
         mList.setLayoutManager(linearLayoutManager);
         mList.addItemDecoration(dividerItemDecoration);
         mList.setAdapter(adapter);
 
+        dList.setHasFixedSize(true);
+        dList.setLayoutManager(linearLayoutManagerDosen);
+        dList.addItemDecoration(dividerItemDecorationDosen);
+        dList.setAdapter(adapterDosen);
+
         final String id_kelas = getActivity().getIntent().getStringExtra("id_kelas");
         getData(id_kelas);
+        getDataDosen(id_kelas);
 
-        recyclerView2 = (RecyclerView) v.findViewById(R.id.rec_DosenUser);
-        dsnAdapter = new DosenAdapter(getContext(), listDosen);
-        recyclerView2.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView2.setAdapter(dsnAdapter);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mSwipeRefreshLayout.setRefreshing(false);
+                memberList.clear();
+                getData(id_kelas);
+                getDataDosen(id_kelas);
+            }
+        });
 
         TextView buttonBckMember = v.findViewById(R.id.bckMember);
         buttonBckMember.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +173,43 @@ public class MemberUserFragment extends Fragment {
                     }
                 }
                 adapter.notifyDataSetChanged();
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+                progressDialog.dismiss();
+            }
+        });
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getDataDosen(final String id_kelas) {
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                url_get_dosen + "?id_kelas=" + id_kelas, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+
+                        Dosen dosen = new Dosen();
+                        dosen.setNama(jsonObject.getString("nama"));
+                        dosen.setPhoto(jsonObject.getString("photo"));
+
+                        dosenList.add(dosen);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        progressDialog.dismiss();
+                    }
+                }
+                adapterDosen.notifyDataSetChanged();
                 progressDialog.dismiss();
             }
         }, new Response.ErrorListener() {
@@ -191,7 +262,12 @@ public class MemberUserFragment extends Fragment {
 //        listMahasiswa.add(new Mahasiswa("Ni Kadek Ratna Sari","1705552061","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
 //
 //
-        listDosen = new ArrayList<>();
-        listDosen.add(new Dosen("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+//        listDosen = new ArrayList<>();
+//        listDosen.add(new Dosen("Anak Agung Ketut Agung Cahyawan Wiranatha, ST, MT","https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwvrRHleqfyChlwZVwlDTvFQOKM1J14WiBJ304R4bnRsYya8p1zA"));
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 }
