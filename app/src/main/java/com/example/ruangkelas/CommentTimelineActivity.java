@@ -134,7 +134,7 @@ public class CommentTimelineActivity extends AppCompatActivity implements SwipeR
             }
         });
 
-        Toast.makeText(CommentTimelineActivity.this, id_announce, Toast.LENGTH_LONG).show();
+//        Toast.makeText(CommentTimelineActivity.this, id_announce, Toast.LENGTH_LONG).show();
 
         getAnnounce(id_announce);
         getData(id_announce);

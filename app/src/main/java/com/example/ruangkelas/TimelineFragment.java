@@ -161,7 +161,7 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         });
 
-        Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
         btAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v3) {
@@ -237,6 +237,8 @@ public class TimelineFragment extends Fragment implements SwipeRefreshLayout.OnR
                         }
                         sendNotification(notification);
 
+                        editTextNewTtlAnn.setText("");
+                        editTextNewAnn.setText("");
 //                        editTextNewNIM.setText("");
 
                     } else {

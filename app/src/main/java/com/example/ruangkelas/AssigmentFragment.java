@@ -153,7 +153,7 @@ public class AssigmentFragment extends Fragment implements SwipeRefreshLayout.On
             }
         });
 
-        Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
+//        Toast.makeText(getActivity(), id_kelas, Toast.LENGTH_LONG).show();
 
         btAddAssign.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,7 +162,7 @@ public class AssigmentFragment extends Fragment implements SwipeRefreshLayout.On
                 String newDtlAssign=editTextNewDtlAssign.getText().toString();
                 String newDateAssign=editTextNewDateAssign.getText().toString();
 
-                Toast.makeText(getActivity(), id_user, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getActivity(), id_user, Toast.LENGTH_LONG).show();
 
                 addAssignment(id_kelas, newAssign, newDtlAssign, newDateAssign);
 //                // add new item to arraylist
@@ -227,6 +227,9 @@ public class AssigmentFragment extends Fragment implements SwipeRefreshLayout.On
                         }
                         sendNotification(notification);
 
+                        editTextNewAssign.setText("");
+                        editTextNewDateAssign.setText("");
+                        editTextNewDtlAssign.setText("");
 //                        editTextNewNIM.setText("");
 
                     } else {

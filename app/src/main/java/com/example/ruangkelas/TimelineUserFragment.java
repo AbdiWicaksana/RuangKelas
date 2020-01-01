@@ -223,6 +223,8 @@ public class TimelineUserFragment extends Fragment implements SwipeRefreshLayout
                         }
                         sendNotification(notification);
 
+                        editTextNewTtlAnn.setText("");
+                        editTextNewAnn.setText("");
 //                        editTextNewNIM.setText("");
 
                     } else {

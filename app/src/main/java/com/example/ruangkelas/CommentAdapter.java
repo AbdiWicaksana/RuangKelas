@@ -80,7 +80,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.MyViewHo
             photo = itemView.findViewById(R.id.photo_profile);
             namaPembuatCom = (TextView) itemView.findViewById(R.id.namaPengirimCom);
             isiCom = (TextView) itemView.findViewById(R.id.isiCom);
-            comRemove = (TextView) itemView.findViewById(R.id.rmvCom);
+//            comRemove = (TextView) itemView.findViewById(R.id.rmvCom);
         }
     }
 }

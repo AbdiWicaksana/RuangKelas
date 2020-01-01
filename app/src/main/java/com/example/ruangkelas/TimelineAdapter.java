@@ -36,7 +36,7 @@ public class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.MyView
     ProgressDialog pDialog;
     int success;
 
-    private static final String TAG = CommentTimelineActivity.class.getSimpleName();
+    private static final String TAG = TimelineAdapter.class.getSimpleName();
 
     private static String url_delete       = Server.URL + "delete_announce.php";
 
